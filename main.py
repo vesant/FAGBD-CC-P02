@@ -6,8 +6,8 @@ from func.sqliteCommands import create_table
 
 #main
 def main():
-    sql = create_table("users", "id INTEGER PRIMARY KEY")
-    print(sql)
+    result = create_table("users", "id INTEGER PRIMARY KEY")
+    print(result)
 
 # main classes
 if __name__ == "__main__":
