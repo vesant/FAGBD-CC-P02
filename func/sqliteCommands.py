@@ -278,6 +278,8 @@ def buscar_consultas_intervalo(data_inicio, data_fim):
     conn.close()
     return resultados
 
+# vai retornar todas as consultas para um determinado paciente
+# cada item: (id_consulta, id_paciente, id_medico, data_consulta, status)
 def buscar_consultas_por_paciente(id_paciente):
     conn = conectar()
     cursor = conn.cursor()
