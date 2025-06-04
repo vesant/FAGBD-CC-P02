@@ -11,7 +11,7 @@ def conectar(db_path: str = None) -> sqlite3.Connection:
     if not db_path:
         # caminho absoluto para db/dbHospital.db, não importa de onde corre o script!
         db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db", "dbHospital.db")
-    print("DEBUG - Caminho absoluto para a base de dados:", db_path)
+    # print("DEBUG - Caminho absoluto para a base de dados:", db_path) # debug
     return sqlite3.connect(db_path)
 
 # ---------------------- #
