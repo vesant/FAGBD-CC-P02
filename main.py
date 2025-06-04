@@ -1,29 +1,30 @@
-# ===============================================
-# Sistema de Gestão Hospitalar - main.py
-# Autores: (Nome1, nº1), (Nome2, nº2), (Nome3, nº3)
-# IPS - Fundamentos Administração e Gestão BD
-# ===============================================
+# =================================================================== #
+# Sistema de Gestão Hospitalar                                        #
+# Autores: Amira Babkir (2024126219) - Vicente Gonçalves (2024122708) #
+# IPS (ESTS) - Fundamentos Administração e Gestão BD - CC 2024/25     #
+# =================================================================== #
 
 import getpass
 import datetime
 from func.sqliteCommands import *
 
-# --------------------------- #
-#  Funções auxiliares simples #
-# --------------------------- #
+# -------------------------- #
+# Funções auxiliares simples #
+# -------------------------- #
 
 def clear():
     print("\n" * 100)
 
 def cifrar(texto):
-    # Simples cifragem reversa (apenas para cumprir requisito)
+    # simples cifragem reversa 
+    # apenas para cumprir requisito: "O prontuário do paciente deve ser gravado de forma cifrada."
     return texto[::-1]
 
 def decifrar(texto_cifrado):
     return texto_cifrado[::-1]
 
 def espera():
-    input("\nPrima ENTER para continuar...")
+    input("\nClique ENTER para continuar...")
 
 # --------------------------- #
 #           LOGIN             #
@@ -31,9 +32,9 @@ def espera():
 
 def login():
     clear()
-    print("====== LOGIN NO SISTEMA ======")
-    login = input("Login: ")
-    senha = getpass.getpass("Senha: ")
+    print("#======# LOGIN NO SISTEMA #======#")
+    login = input("Username: ")
+    senha = getpass.getpass("Password: ")
 
     user = autenticar_user(login, senha)
     if user:
@@ -41,18 +42,18 @@ def login():
         print("Login efetuado com sucesso!\n")
         return user
     else:
-        print("Login ou senha incorretos.")
+        print("Username ou password incorretos.")
         espera()
         return None
 
-# --------------------------------------- #
-#           MENUS DO SISTEMA              #
-# --------------------------------------- #
+# ---------------- #
+# menus do sistema #
+# ---------------- #
 
 def menu_admin(user):
     while True:
         clear()
-        print("===== Menu Administrador =====")
+        print("#=====# Menu Administrador #=====#")
         print("1. Adicionar Paciente")
         print("2. Adicionar Médico ou Enfermeiro")
         print("3. Agendar Consulta")
@@ -60,7 +61,7 @@ def menu_admin(user):
         print("5. Adicionar Prescrição")
         print("6. Visualizar Pacientes")
         print("7. Visualizar Médicos ou Enfermeiros")
-        print("8. Modificar contato")
+        print("8. Modificar contactos")
         print("9. Visualizar Consultas")
         print("10. Visualizar Tratamentos de um Paciente")
         print("11. Visualizar Prescrições por Médico/Período")
@@ -107,11 +108,11 @@ def menu_admin(user):
 def menu_paciente(user):
     while True:
         clear()
-        print("===== Menu Paciente =====")
-        print("1. Ver minhas informações")
-        print("2. Modificar meus dados")
-        print("3. Ver minhas consultas")
-        print("4. Ver meus tratamentos")
+        print("#=====# Menu Paciente #=====#")
+        print("1. Ver as minhas informações")
+        print("2. Modificar os meus dados")
+        print("3. Ver as minhas consultas")
+        print("4. Ver os meus tratamentos")
         print("5. Sair")
         op = input("Opção: ")
         if op == "1":
@@ -131,10 +132,10 @@ def menu_paciente(user):
 def menu_medico(user):
     while True:
         clear()
-        print("===== Menu Médico =====")
-        print("1. Visualizar meus pacientes")
-        print("2. Visualizar minhas prescrições")
-        print("3. Visualizar minhas consultas")
+        print("#=====# Menu Médico #=====#")
+        print("1. Visualizar os meus pacientes")
+        print("2. Visualizar as minhas prescrições")
+        print("3. Visualizar as minhas consultas")
         print("4. Sair")
         op = input("Opção: ")
         if op == "1":
@@ -152,10 +153,10 @@ def menu_medico(user):
 def menu_enfermeiro(user):
     while True:
         clear()
-        print("===== Menu Enfermeiro =====")
-        print("1. Visualizar meus dados")
-        print("2. Modificar meu contato")
-        print("3. Visualizar consultas dos pacientes")
+        print("#=====# Menu Enfermeiro #=====#")
+        print("1. Visualizar os meus dados")
+        print("2. Modificar os meu contactos")
+        print("3. Visualizar as consultas dos pacientes")
         print("4. Sair")
         op = input("Opção: ")
         if op == "1":
@@ -170,13 +171,13 @@ def menu_enfermeiro(user):
             print("Opção inválida!")
             espera()
 
-# ------------------------- #
-#   Funções dos MENUS       #
-# ------------------------- #
+# ----------------- #
+# funçoes dos menus #
+# ----------------- #
 
 def adicionar_paciente_menu(user):
     clear()
-    print("== Adicionar Paciente ==")
+    print("#==# Adicionar Paciente #==#")
     nome = input("Nome: ")
     data_nasc = input("Data de nascimento (YYYY-MM-DD): ")
     genero = input("Gênero: ")
@@ -194,7 +195,7 @@ def adicionar_paciente_menu(user):
 
 def adicionar_funcionario_menu(user):
     clear()
-    print("== Adicionar Funcionário ==")
+    print("#==# Adicionar Funcionário #==#")
     print("1. Médico")
     print("2. Enfermeiro")
     tipo = input("Opção: ")
@@ -223,7 +224,7 @@ def adicionar_funcionario_menu(user):
 
 def agendar_consulta_menu(user):
     clear()
-    print("== Agendar Consulta ==")
+    print("#==# Agendar Consulta #==#")
     try:
         id_pac = int(input("ID do paciente: "))
         id_med = int(input("ID do médico: "))
@@ -239,7 +240,7 @@ def agendar_consulta_menu(user):
 
 def adicionar_tratamento_menu(user):
     clear()
-    print("== Adicionar Tratamento ==")
+    print("#==# Adicionar Tratamento #==#")
     try:
         id_pac = int(input("ID do paciente: "))
         descricao = input("Descrição do tratamento (máx 1024): ")
@@ -254,7 +255,7 @@ def adicionar_tratamento_menu(user):
 
 def adicionar_prescricao_menu(user):
     clear()
-    print("== Adicionar Prescrição ==")
+    print("#==# Adicionar Prescrição #==#")
     try:
         id_pac = int(input("ID do paciente: "))
         id_med = int(input("ID do médico: "))
@@ -270,7 +271,7 @@ def adicionar_prescricao_menu(user):
 
 def visualizar_pacientes_menu(user):
     clear()
-    print("== Buscar Pacientes ==")
+    print("#==# Buscar Pacientes #==#")
     print("1. Por nome")
     print("2. Por contato")
     op = input("Opção: ")
@@ -289,7 +290,7 @@ def visualizar_pacientes_menu(user):
 def visualizar_funcionarios_menu(user, so_medicos=False):
     clear()
     if so_medicos:
-        print("== Médicos ==")
+        print("#==# Médicos #==#")
         medicos = buscar_medico_por_nome("")
         for m in medicos:
             print(m)
@@ -309,7 +310,7 @@ def visualizar_funcionarios_menu(user, so_medicos=False):
 
 def modificar_contato_menu(user):
     clear()
-    print("== Modificar Contato ==")
+    print("#==# Modificar Contato #==#")
     print("1. Paciente")
     print("2. Médico")
     print("3. Enfermeiro")
@@ -335,7 +336,7 @@ def modificar_contato_menu(user):
 
 def visualizar_consultas_menu(user, so_meu_medico=False):
     clear()
-    print("== Visualizar Consultas ==")
+    print("#==# Visualizar Consultas #==#")
     print("1. Por dia")
     print("2. Por intervalo")
     op = input("Opção: ")
@@ -353,7 +354,7 @@ def visualizar_consultas_menu(user, so_meu_medico=False):
 
 def visualizar_tratamentos_menu(user):
     clear()
-    print("== Visualizar Tratamentos de um Paciente ==")
+    print("#==# Visualizar Tratamentos de um Paciente #==#")
     idp = int(input("ID do paciente: "))
     tratamentos = buscar_tratamentos_paciente(idp)
     for t in tratamentos:
@@ -363,7 +364,7 @@ def visualizar_tratamentos_menu(user):
 
 def visualizar_prescricoes_menu(user, so_meu_medico=False):
     clear()
-    print("== Visualizar Prescrições ==")
+    print("#==# Visualizar Prescrições #==#")
     if so_meu_medico:
         id_med = user[0]  # assume que o id_user = id_medico
     else:
@@ -386,7 +387,7 @@ def visualizar_prescricoes_menu(user, so_meu_medico=False):
 
 def visualizar_tabela_menu(user):
     clear()
-    print("== Visualizar conteúdo de uma tabela ==")
+    print("#==# Visualizar conteúdo de uma tabela #==#")
     tabela = input("Nome da tabela: ")
     dados = buscar_todos_conteudo_tabela(tabela)
     for d in dados:
@@ -396,7 +397,7 @@ def visualizar_tabela_menu(user):
 
 def visualizar_log_menu(user):
     clear()
-    print("== Visualizar Log de Acessos ==")
+    print("#==# Visualizar Log de Acessos #==#")
     print("1. Por período")
     print("2. Por utilizador")
     op = input("Opção: ")
@@ -411,7 +412,10 @@ def visualizar_log_menu(user):
         print(l)
     espera()
 
-# ---- Menus próprios para o próprio paciente ou enfermeiro
+# -------------------------------------------- #
+# menus proprios para o paciente ou enfermeiro #
+# -------------------------------------------- #
+
 def visualizar_meu_perfil(user):
     print("== Meu Perfil ==")
     print(user)
@@ -420,7 +424,7 @@ def visualizar_meu_perfil(user):
 def modificar_meus_dados_menu(user):
     print("== Modificar meus dados ==")
     novo_contato = input("Novo contato: ")
-    # Supondo user[2] == tipo_user e user[0] == id_user
+    # supondo user[2] == tipo_user e user[0] == id_user
     if user[2] == "paciente":
         editar_paciente(user[0], contato=novo_contato)
     elif user[2] == "enfermeiro":
@@ -430,7 +434,7 @@ def modificar_meus_dados_menu(user):
     espera()
 
 def visualizar_minhas_consultas(user):
-    # Aqui supõe-se que o id_user == id_paciente
+    # aqui tem que ser o id_user == id_paciente
     consultas = buscar_consultas_por_paciente(user[0])
     for c in consultas:
         print(c)
@@ -442,9 +446,9 @@ def visualizar_meus_tratamentos(user):
         print(t)
     espera()
 
-# ----------------------------------------- #
-#                MAIN LOOP                  #
-# ----------------------------------------- #
+# --------- #
+# main loop #
+# --------- #
 
 def main():
     while True:
