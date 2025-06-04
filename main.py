@@ -1,14 +1,468 @@
-# import de bibliotecas 
-import sqlite3
+# ===============================================
+# Sistema de Gestão Hospitalar - main.py
+# Autores: (Nome1, nº1), (Nome2, nº2), (Nome3, nº3)
+# IPS - Fundamentos Administração e Gestão BD
+# ===============================================
 
-#import de metodos externos
-from func.sqliteCommands import create_table
+import getpass
+import datetime
+from func.sqliteCommands import *
 
-#main
+# --------------------------- #
+#  Funções auxiliares simples #
+# --------------------------- #
+
+def clear():
+    print("\n" * 100)
+
+def cifrar(texto):
+    # Simples cifragem reversa (apenas para cumprir requisito)
+    return texto[::-1]
+
+def decifrar(texto_cifrado):
+    return texto_cifrado[::-1]
+
+def espera():
+    input("\nPrima ENTER para continuar...")
+
+# --------------------------- #
+#           LOGIN             #
+# --------------------------- #
+
+def login():
+    clear()
+    print("====== LOGIN NO SISTEMA ======")
+    login = input("Login: ")
+    senha = getpass.getpass("Senha: ")
+
+    user = autenticar_user(login, senha)
+    if user:
+        gravar_log(user[0], "login", "sucesso")
+        print("Login efetuado com sucesso!\n")
+        return user
+    else:
+        print("Login ou senha incorretos.")
+        espera()
+        return None
+
+# --------------------------------------- #
+#           MENUS DO SISTEMA              #
+# --------------------------------------- #
+
+def menu_admin(user):
+    while True:
+        clear()
+        print("===== Menu Administrador =====")
+        print("1. Adicionar Paciente")
+        print("2. Adicionar Médico ou Enfermeiro")
+        print("3. Agendar Consulta")
+        print("4. Adicionar Tratamento")
+        print("5. Adicionar Prescrição")
+        print("6. Visualizar Pacientes")
+        print("7. Visualizar Médicos ou Enfermeiros")
+        print("8. Modificar contato")
+        print("9. Visualizar Consultas")
+        print("10. Visualizar Tratamentos de um Paciente")
+        print("11. Visualizar Prescrições por Médico/Período")
+        print("12. Visualizar funcionários médicos")
+        print("13. Visualizar conteúdo de tabelas")
+        print("14. Visualizar log de acessos")
+        print("15. Sair")
+        op = input("Opção: ")
+
+        if op == "1":
+            adicionar_paciente_menu(user)
+        elif op == "2":
+            adicionar_funcionario_menu(user)
+        elif op == "3":
+            agendar_consulta_menu(user)
+        elif op == "4":
+            adicionar_tratamento_menu(user)
+        elif op == "5":
+            adicionar_prescricao_menu(user)
+        elif op == "6":
+            visualizar_pacientes_menu(user)
+        elif op == "7":
+            visualizar_funcionarios_menu(user)
+        elif op == "8":
+            modificar_contato_menu(user)
+        elif op == "9":
+            visualizar_consultas_menu(user)
+        elif op == "10":
+            visualizar_tratamentos_menu(user)
+        elif op == "11":
+            visualizar_prescricoes_menu(user)
+        elif op == "12":
+            visualizar_funcionarios_menu(user, so_medicos=True)
+        elif op == "13":
+            visualizar_tabela_menu(user)
+        elif op == "14":
+            visualizar_log_menu(user)
+        elif op == "15":
+            break
+        else:
+            print("Opção inválida!")
+            espera()
+
+def menu_paciente(user):
+    while True:
+        clear()
+        print("===== Menu Paciente =====")
+        print("1. Ver minhas informações")
+        print("2. Modificar meus dados")
+        print("3. Ver minhas consultas")
+        print("4. Ver meus tratamentos")
+        print("5. Sair")
+        op = input("Opção: ")
+        if op == "1":
+            visualizar_meu_perfil(user)
+        elif op == "2":
+            modificar_meus_dados_menu(user)
+        elif op == "3":
+            visualizar_minhas_consultas(user)
+        elif op == "4":
+            visualizar_meus_tratamentos(user)
+        elif op == "5":
+            break
+        else:
+            print("Opção inválida!")
+            espera()
+
+def menu_medico(user):
+    while True:
+        clear()
+        print("===== Menu Médico =====")
+        print("1. Visualizar meus pacientes")
+        print("2. Visualizar minhas prescrições")
+        print("3. Visualizar minhas consultas")
+        print("4. Sair")
+        op = input("Opção: ")
+        if op == "1":
+            visualizar_pacientes_menu(user)
+        elif op == "2":
+            visualizar_prescricoes_menu(user, so_meu_medico=True)
+        elif op == "3":
+            visualizar_consultas_menu(user, so_meu_medico=True)
+        elif op == "4":
+            break
+        else:
+            print("Opção inválida!")
+            espera()
+
+def menu_enfermeiro(user):
+    while True:
+        clear()
+        print("===== Menu Enfermeiro =====")
+        print("1. Visualizar meus dados")
+        print("2. Modificar meu contato")
+        print("3. Visualizar consultas dos pacientes")
+        print("4. Sair")
+        op = input("Opção: ")
+        if op == "1":
+            visualizar_meu_perfil(user)
+        elif op == "2":
+            modificar_meus_dados_menu(user)
+        elif op == "3":
+            visualizar_consultas_menu(user)
+        elif op == "4":
+            break
+        else:
+            print("Opção inválida!")
+            espera()
+
+# ------------------------- #
+#   Funções dos MENUS       #
+# ------------------------- #
+
+def adicionar_paciente_menu(user):
+    clear()
+    print("== Adicionar Paciente ==")
+    nome = input("Nome: ")
+    data_nasc = input("Data de nascimento (YYYY-MM-DD): ")
+    genero = input("Gênero: ")
+    contato = input("Contato: ")
+    prontuario = input("Prontuário médico (texto livre): ")
+    cifrado = cifrar(prontuario)
+    try:
+        id_pac = adicionar_paciente(nome, data_nasc, genero, contato)
+        gravar_log(user[0], "add_paciente", "sucesso")
+        print(f"Paciente adicionado com ID: {id_pac}")
+    except Exception as e:
+        gravar_log(user[0], "add_paciente", "falha")
+        print("Erro ao adicionar paciente:", str(e))
+    espera()
+
+def adicionar_funcionario_menu(user):
+    clear()
+    print("== Adicionar Funcionário ==")
+    print("1. Médico")
+    print("2. Enfermeiro")
+    tipo = input("Opção: ")
+    nome = input("Nome: ")
+    contato = input("Contato: ")
+    if tipo == "1":
+        espec = input("Especialidade: ")
+        try:
+            idm = adicionar_medico(nome, espec, contato)
+            gravar_log(user[0], "add_medico", "sucesso")
+            print(f"Médico adicionado com ID: {idm}")
+        except Exception as e:
+            gravar_log(user[0], "add_medico", "falha")
+            print("Erro ao adicionar médico:", str(e))
+    elif tipo == "2":
+        try:
+            ide = adicionar_enfermeiro(nome, contato)
+            gravar_log(user[0], "add_enfermeiro", "sucesso")
+            print(f"Enfermeiro adicionado com ID: {ide}")
+        except Exception as e:
+            gravar_log(user[0], "add_enfermeiro", "falha")
+            print("Erro ao adicionar enfermeiro:", str(e))
+    else:
+        print("Opção inválida!")
+    espera()
+
+def agendar_consulta_menu(user):
+    clear()
+    print("== Agendar Consulta ==")
+    try:
+        id_pac = int(input("ID do paciente: "))
+        id_med = int(input("ID do médico: "))
+        data_cons = input("Data da consulta (YYYY-MM-DD HH:MM): ")
+        status = "agendada"
+        idc = agendar_consulta(id_pac, id_med, data_cons, status)
+        gravar_log(user[0], "agendar_consulta", "sucesso")
+        print(f"Consulta agendada com ID: {idc}")
+    except Exception as e:
+        gravar_log(user[0], "agendar_consulta", "falha")
+        print("Erro ao agendar consulta:", str(e))
+    espera()
+
+def adicionar_tratamento_menu(user):
+    clear()
+    print("== Adicionar Tratamento ==")
+    try:
+        id_pac = int(input("ID do paciente: "))
+        descricao = input("Descrição do tratamento (máx 1024): ")
+        data_trat = input("Data do tratamento (YYYY-MM-DD): ")
+        idt = adicionar_tratamento(id_pac, descricao[:1024], data_trat)
+        gravar_log(user[0], "add_tratamento", "sucesso")
+        print(f"Tratamento adicionado com ID: {idt}")
+    except Exception as e:
+        gravar_log(user[0], "add_tratamento", "falha")
+        print("Erro ao adicionar tratamento:", str(e))
+    espera()
+
+def adicionar_prescricao_menu(user):
+    clear()
+    print("== Adicionar Prescrição ==")
+    try:
+        id_pac = int(input("ID do paciente: "))
+        id_med = int(input("ID do médico: "))
+        medicamento = input("Nome do medicamento: ")
+        data_presc = input("Data da prescrição (YYYY-MM-DD): ")
+        idp = adicionar_prescricao(id_pac, id_med, medicamento, data_presc)
+        gravar_log(user[0], "add_prescricao", "sucesso")
+        print(f"Prescrição adicionada com ID: {idp}")
+    except Exception as e:
+        gravar_log(user[0], "add_prescricao", "falha")
+        print("Erro ao adicionar prescrição:", str(e))
+    espera()
+
+def visualizar_pacientes_menu(user):
+    clear()
+    print("== Buscar Pacientes ==")
+    print("1. Por nome")
+    print("2. Por contato")
+    op = input("Opção: ")
+    if op == "1":
+        nome = input("Nome: ")
+        pacientes = buscar_paciente_por_nome(nome)
+    else:
+        contato = input("Contato: ")
+        pacientes = buscar_paciente_por_contato(contato)
+    print("\nResultados:")
+    for pac in pacientes:
+        print(pac)
+    gravar_log(user[0], "visualizar_pacientes", "sucesso")
+    espera()
+
+def visualizar_funcionarios_menu(user, so_medicos=False):
+    clear()
+    if so_medicos:
+        print("== Médicos ==")
+        medicos = buscar_medico_por_nome("")
+        for m in medicos:
+            print(m)
+    else:
+        print("1. Médicos\n2. Enfermeiros")
+        op = input("Opção: ")
+        if op == "1":
+            medicos = buscar_medico_por_nome("")
+            for m in medicos:
+                print(m)
+        else:
+            enfers = buscar_enfermeiro_por_nome("")
+            for e in enfers:
+                print(e)
+    gravar_log(user[0], "visualizar_funcionarios", "sucesso")
+    espera()
+
+def modificar_contato_menu(user):
+    clear()
+    print("== Modificar Contato ==")
+    print("1. Paciente")
+    print("2. Médico")
+    print("3. Enfermeiro")
+    op = input("Qual tipo de utilizador? ")
+    try:
+        id = int(input("ID do utilizador: "))
+        novo_contato = input("Novo contato: ")
+        if op == "1":
+            editar_paciente(id, contato=novo_contato)
+        elif op == "2":
+            editar_medico(id, contato=novo_contato)
+        elif op == "3":
+            editar_enfermeiro(id, contato=novo_contato)
+        else:
+            print("Opção inválida!")
+            return
+        gravar_log(user[0], "modificar_contato", "sucesso")
+        print("Contato atualizado!")
+    except Exception as e:
+        gravar_log(user[0], "modificar_contato", "falha")
+        print("Erro:", str(e))
+    espera()
+
+def visualizar_consultas_menu(user, so_meu_medico=False):
+    clear()
+    print("== Visualizar Consultas ==")
+    print("1. Por dia")
+    print("2. Por intervalo")
+    op = input("Opção: ")
+    if op == "1":
+        data = input("Data (YYYY-MM-DD): ")
+        consultas = buscar_consultas_por_data(data)
+    else:
+        data1 = input("Data início (YYYY-MM-DD): ")
+        data2 = input("Data fim (YYYY-MM-DD): ")
+        consultas = buscar_consultas_intervalo(data1, data2)
+    for c in consultas:
+        print(c)
+    gravar_log(user[0], "visualizar_consultas", "sucesso")
+    espera()
+
+def visualizar_tratamentos_menu(user):
+    clear()
+    print("== Visualizar Tratamentos de um Paciente ==")
+    idp = int(input("ID do paciente: "))
+    tratamentos = buscar_tratamentos_paciente(idp)
+    for t in tratamentos:
+        print(t)
+    gravar_log(user[0], "visualizar_tratamentos", "sucesso")
+    espera()
+
+def visualizar_prescricoes_menu(user, so_meu_medico=False):
+    clear()
+    print("== Visualizar Prescrições ==")
+    if so_meu_medico:
+        id_med = user[0]  # assume que o id_user = id_medico
+    else:
+        id_med = int(input("ID do médico: "))
+    print("1. Por período")
+    print("2. Por faixa etária e período")
+    op = input("Opção: ")
+    data1 = input("Data início (YYYY-MM-DD): ")
+    data2 = input("Data fim (YYYY-MM-DD): ")
+    if op == "1":
+        prescricoes = buscar_prescricoes_por_medico_periodo(id_med, data1, data2)
+    else:
+        idade_min = int(input("Idade mínima: "))
+        idade_max = int(input("Idade máxima: "))
+        prescricoes = buscar_prescricoes_medico_idade(id_med, idade_min, idade_max, data1, data2)
+    for p in prescricoes:
+        print(p)
+    gravar_log(user[0], "visualizar_prescricoes", "sucesso")
+    espera()
+
+def visualizar_tabela_menu(user):
+    clear()
+    print("== Visualizar conteúdo de uma tabela ==")
+    tabela = input("Nome da tabela: ")
+    dados = buscar_todos_conteudo_tabela(tabela)
+    for d in dados:
+        print(d)
+    gravar_log(user[0], f"visualizar_tabela_{tabela}", "sucesso")
+    espera()
+
+def visualizar_log_menu(user):
+    clear()
+    print("== Visualizar Log de Acessos ==")
+    print("1. Por período")
+    print("2. Por utilizador")
+    op = input("Opção: ")
+    if op == "1":
+        data1 = input("Data início (YYYY-MM-DD): ")
+        data2 = input("Data fim (YYYY-MM-DD): ")
+        logs = buscar_logs_por_periodo(data1, data2)
+    else:
+        id_user = int(input("ID do utilizador: "))
+        logs = buscar_logs_por_user(id_user)
+    for l in logs:
+        print(l)
+    espera()
+
+# ---- Menus próprios para o próprio paciente ou enfermeiro
+def visualizar_meu_perfil(user):
+    print("== Meu Perfil ==")
+    print(user)
+    espera()
+
+def modificar_meus_dados_menu(user):
+    print("== Modificar meus dados ==")
+    novo_contato = input("Novo contato: ")
+    # Supondo user[2] == tipo_user e user[0] == id_user
+    if user[2] == "paciente":
+        editar_paciente(user[0], contato=novo_contato)
+    elif user[2] == "enfermeiro":
+        editar_enfermeiro(user[0], contato=novo_contato)
+    gravar_log(user[0], "modificar_meus_dados", "sucesso")
+    print("Contato atualizado!")
+    espera()
+
+def visualizar_minhas_consultas(user):
+    # Aqui supõe-se que o id_user == id_paciente
+    consultas = buscar_consultas_por_paciente(user[0])
+    for c in consultas:
+        print(c)
+    espera()
+
+def visualizar_meus_tratamentos(user):
+    tratamentos = buscar_tratamentos_paciente(user[0])
+    for t in tratamentos:
+        print(t)
+    espera()
+
+# ----------------------------------------- #
+#                MAIN LOOP                  #
+# ----------------------------------------- #
+
 def main():
-    result = create_table("users", "id INTEGER PRIMARY KEY")
-    print(result)
+    while True:
+        user = None
+        while not user:
+            user = login()
+        # user = (id_user, login, tipo_user)
+        if user[2] == "admin":
+            menu_admin(user)
+        elif user[2] == "paciente":
+            menu_paciente(user)
+        elif user[2] == "medico":
+            menu_medico(user)
+        elif user[2] == "enfermeiro":
+            menu_enfermeiro(user)
+        else:
+            print("Tipo de utilizador desconhecido!")
+            espera()
 
-# main classes
 if __name__ == "__main__":
     main()
