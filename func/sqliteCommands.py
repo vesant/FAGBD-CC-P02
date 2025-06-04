@@ -1,12 +1,17 @@
 import sqlite3
 from typing import List, Tuple, Optional
+import os
 
 # ----------------- #
 # funçao de conexao #
 # ----------------- #
 
 # vai abrir (ou criar) a db SQLite e retorna o objeto de conexao
-def conectar(db_path: str = "../db/dbHospital.db") -> sqlite3.Connection:
+def conectar(db_path: str = None) -> sqlite3.Connection:
+    if not db_path:
+        # caminho absoluto para db/dbHospital.db, não importa de onde corre o script!
+        db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db", "dbHospital.db")
+    print("DEBUG - Caminho absoluto para a base de dados:", db_path)
     return sqlite3.connect(db_path)
 
 # ---------------------- #
