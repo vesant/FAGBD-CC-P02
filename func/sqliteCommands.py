@@ -278,6 +278,14 @@ def buscar_consultas_intervalo(data_inicio, data_fim):
     conn.close()
     return resultados
 
+def buscar_consultas_por_paciente(id_paciente):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Consulta WHERE id_paciente = ?;", (id_paciente,))
+    resultados = cursor.fetchall()
+    conn.close()
+    return resultados
+
 # ------------------------ #
 # funcoes para tratamentos #
 # ------------------------ #
