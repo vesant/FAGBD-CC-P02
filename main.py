@@ -2,226 +2,92 @@
 # Sistema de Gestão Hospitalar                                        #
 # Autores: Amira Babkir (2024126219) - Vicente Gonçalves (2024122708) #
 # IPS (ESTS) - Fundamentos Administração e Gestão BD - CC 2024/25     #
+# Reformulado com [rich] para UI na consola                           #
 # =================================================================== #
 
+from rich import print
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.traceback import install
 import getpass
 import datetime
 from func.sqliteCommands import *
-from colorama import init, Fore, Style
-init(autoreset=True)
+
+install()
+console = Console()
 
 # -------------------------- #
 # Funções auxiliares simples #
 # -------------------------- #
 
-# vai fazer a lógica da função 'clear'
 def clear():
-    print("\n" * 100)
+    console.print("\n" * 100)
 
-# vai fazer a lógica da função 'cifrar'
 def cifrar(texto):
     # simples cifragem reversa 
-    # apenas para cumprir requisito: "O prontuário do paciente deve ser gravado de forma cifrada."
     return texto[::-1]
 
-# vai fazer a lógica da função 'decifrar'
 def decifrar(texto_cifrado):
     return texto_cifrado[::-1]
 
-# vai fazer a lógica da função 'espera'
 def espera():
     input("\nClique ENTER para continuar...")
 
-# vai fazer a lógica da função 'listar_pacientes_simples'
 def listar_pacientes_simples():
     pacientes = buscar_paciente_por_nome("")
-    print("\nPacientes disponíveis:")
+    console.print("\nPacientes disponíveis:")
     for p in pacientes:
-        print(f"ID: {p[0]} | Nome: {p[1]}")
+        console.print(f"ID: {p[0]} | Nome: {p[1]}")
 
-# vai fazer a lógica da função 'listar_medicos_simples'
 def listar_medicos_simples():
     medicos = buscar_medico_por_nome("")
-    print("\nMédicos disponíveis:")
+    console.print("\nMédicos disponíveis:")
     for m in medicos:
-        print(f"ID: {m[0]} | Nome: {m[1]} | Especialidade: {m[2]}")
+        console.print(f"ID: {m[0]} | Nome: {m[1]} | Especialidade: {m[2]}")
 
-# vai fazer a lógica da função 'listar_enfermeiros_simples'
 def listar_enfermeiros_simples():
     enfers = buscar_enfermeiro_por_nome("")
-    print("\nEnfermeiros disponíveis:")
+    console.print("\nEnfermeiros disponíveis:")
     for e in enfers:
-        print(f"ID: {e[0]} | Nome: {e[1]}")
+        console.print(f"ID: {e[0]} | Nome: {e[1]}")
 
 # --------------------------- #
 #           LOGIN             #
 # --------------------------- #
 
-# vai fazer a lógica da função 'login'
+# vai fazer o login do utilizador no sistema com autenticação e feedback
 def login():
     clear()
-    print(Fore.CYAN + Style.BRIGHT + "#======# LOGIN NO SISTEMA #======#")
+    console.print(Panel("#======# LOGIN NO SISTEMA #======#"))
     login = input("Username: ")
     senha = getpass.getpass("Password: ")
 
     user = autenticar_user(login, senha)
     if user:
         gravar_log(user[0], "login", "sucesso")
-        print(Fore.GREEN + "Login efetuado com sucesso!\n")
+        console.print("[green]Login efetuado com sucesso![/green]\n")
         return user
     else:
-        print(Fore.RED + "Username ou password incorretos.")
+        console.print("[red]Username ou password incorretos.[/red]")
         espera()
         return None
-
-# ---------------- #
-# menus do sistema #
-# ---------------- #
-
-def menu_admin(user):
-    while True:
-        clear()
-        print(Fore.CYAN + Style.BRIGHT + "#=====# Menu Administrador #=====#")
-        print("1. Adicionar Paciente")
-        print("2. Adicionar Médico ou Enfermeiro")
-        print("3. Agendar Consulta")
-        print("4. Adicionar Tratamento")
-        print("5. Adicionar Prescrição")
-        print("6. Visualizar Pacientes")
-        print("7. Visualizar Médicos ou Enfermeiros")
-        print("8. Modificar contactos")
-        print("9. Visualizar Consultas")
-        print("10. Visualizar Tratamentos de um Paciente")
-        print("11. Visualizar Prescrições por Médico/Período")
-        print("12. Visualizar funcionários médicos")
-        print("13. Visualizar conteúdo de tabelas")
-        print("14. Visualizar log de acessos")
-        print("15. Excluir Paciente")
-        print("16. Excluir Médico")
-        print("17. Excluir Enfermeiro")
-        print("18. Sair")
-        op = input("Opção: ")
-
-        if op == "1":
-            adicionar_paciente_menu(user)
-        elif op == "2":
-            adicionar_funcionario_menu(user)
-        elif op == "3":
-            agendar_consulta_menu(user)
-        elif op == "4":
-            adicionar_tratamento_menu(user)
-        elif op == "5":
-            adicionar_prescricao_menu(user)
-        elif op == "6":
-            visualizar_pacientes_menu(user)
-        elif op == "7":
-            visualizar_funcionarios_menu(user)
-        elif op == "8":
-            modificar_contato_menu(user)
-        elif op == "9":
-            visualizar_consultas_menu(user)
-        elif op == "10":
-            visualizar_tratamentos_menu(user)
-        elif op == "11":
-            visualizar_prescricoes_menu(user)
-        elif op == "12":
-            visualizar_funcionarios_menu(user, so_medicos=True)
-        elif op == "13":
-            visualizar_tabela_menu(user)
-        elif op == "14":
-            visualizar_log_menu(user)
-        elif op == "15":
-            excluir_paciente_menu(user)
-        elif op == "16":
-            excluir_medico_menu(user)
-        elif op == "17":
-            excluir_enfermeiro_menu(user)
-        elif op == "18":
-            break
-        else:
-            print("Opção inválida!")
-            espera()
-
-def menu_paciente(user):
-    while True:
-        clear()
-        print("#=====# Menu Paciente #=====#")
-        print("1. Ver as minhas informações")
-        print("2. Modificar os meus dados")
-        print("3. Ver as minhas consultas")
-        print("4. Ver os meus tratamentos")
-        print("5. Sair")
-        op = input("Opção: ")
-        if op == "1":
-            visualizar_meu_perfil(user)
-        elif op == "2":
-            modificar_meus_dados_menu(user)
-        elif op == "3":
-            visualizar_minhas_consultas(user)
-        elif op == "4":
-            visualizar_meus_tratamentos(user)
-        elif op == "5":
-            break
-        else:
-            print("Opção inválida!")
-            espera()
-
-def menu_medico(user):
-    while True:
-        clear()
-        print("#=====# Menu Médico #=====#")
-        print("1. Visualizar os meus pacientes")
-        print("2. Visualizar as minhas prescrições")
-        print("3. Visualizar as minhas consultas")
-        print("4. Sair")
-        op = input("Opção: ")
-        if op == "1":
-            visualizar_pacientes_menu(user)
-        elif op == "2":
-            visualizar_prescricoes_menu(user, so_meu_medico=True)
-        elif op == "3":
-            visualizar_consultas_menu(user, so_meu_medico=True)
-        elif op == "4":
-            break
-        else:
-            print("Opção inválida!")
-            espera()
-
-def menu_enfermeiro(user):
-    while True:
-        clear()
-        print("#=====# Menu Enfermeiro #=====#")
-        print("1. Visualizar os meus dados")
-        print("2. Modificar os meu contactos")
-        print("3. Visualizar as consultas dos pacientes")
-        print("4. Sair")
-        op = input("Opção: ")
-        if op == "1":
-            visualizar_meu_perfil(user)
-        elif op == "2":
-            modificar_meus_dados_menu(user)
-        elif op == "3":
-            visualizar_consultas_menu(user)
-        elif op == "4":
-            break
-        else:
-            print("Opção inválida!")
-            espera()
 
 # ----------------- #
 # funçoes dos menus #
 # ----------------- #
 
+# vai fazer o registo de um novo paciente com cifragem do prontuário
 def adicionar_paciente_menu(user):
     clear()
-    print("#==# Adicionar Paciente #==#")
+    print(Fore.CYAN + Style.BRIGHT + "#==# Adicionar Paciente #==#")
     nome = input("Nome: ")
     data_nasc = input("Data de nascimento (YYYY-MM-DD): ")
     genero = input("Gênero: ")
     contato = input("Contato: ")
     prontuario = input("Prontuário médico (texto livre): ")
-    
-    prontuario_cifrado = cifrar(prontuario) # cifra aqui!
+
+    prontuario_cifrado = cifrar(prontuario)
 
     try:
         id_pac = adicionar_paciente(nome, data_nasc, genero, contato, prontuario_cifrado)
@@ -232,9 +98,10 @@ def adicionar_paciente_menu(user):
         print("Erro ao adicionar paciente:", str(e))
     espera()
 
+# vai adicionar médico ou enfermeiro conforme a escolha
 def adicionar_funcionario_menu(user):
     clear()
-    print("#==# Adicionar Funcionário #==#")
+    print(Fore.CYAN + Style.BRIGHT + "#==# Adicionar Funcionário #==#")
     print("1. Médico")
     print("2. Enfermeiro")
     tipo = input("Opção: ")
@@ -261,9 +128,10 @@ def adicionar_funcionario_menu(user):
         print("Opção inválida!")
     espera()
 
+# vai agendar uma consulta com paciente e médico
 def agendar_consulta_menu(user):
     clear()
-    print("#==# Agendar Consulta #==#")
+    print(Fore.CYAN + Style.BRIGHT + "#==# Agendar Consulta #==#")
     try:
         listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
@@ -279,9 +147,10 @@ def agendar_consulta_menu(user):
         print("Erro ao agendar consulta:", str(e))
     espera()
 
+# vai adicionar tratamento ao paciente
 def adicionar_tratamento_menu(user):
     clear()
-    print("#==# Adicionar Tratamento #==#")
+    print(Fore.CYAN + Style.BRIGHT + "#==# Adicionar Tratamento #==#")
     try:
         listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
@@ -295,9 +164,10 @@ def adicionar_tratamento_menu(user):
         print("Erro ao adicionar tratamento:", str(e))
     espera()
 
+# vai adicionar uma prescrição para um paciente
 def adicionar_prescricao_menu(user):
     clear()
-    print("#==# Adicionar Prescrição #==#")
+    print(Fore.CYAN + Style.BRIGHT + "#==# Adicionar Prescrição #==#")
     try:
         listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
@@ -315,7 +185,7 @@ def adicionar_prescricao_menu(user):
 
 def visualizar_pacientes_menu(user):
     clear()
-    print("#==# Buscar Pacientes #==#")
+    print(Fore.CYAN + Style.BRIGHT + "#==# Buscar Pacientes #==#")
     print("(deixe em branco para vizualizar todos)")
     print("1. Por nome")
     print("2. Por contato")
@@ -341,7 +211,7 @@ def visualizar_pacientes_menu(user):
 def visualizar_funcionarios_menu(user, so_medicos=False):
     clear()
     if so_medicos:
-        print("#==# Médicos #==#")
+        print(Fore.CYAN + Style.BRIGHT + "#==# Médicos #==#")
         medicos = buscar_medico_por_nome("")
         if medicos:
             print("ID | Nome                 | Especialidade       | Contato")
