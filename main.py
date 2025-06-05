@@ -183,9 +183,11 @@ def adicionar_paciente_menu(user):
     genero = input("Gênero: ")
     contato = input("Contato: ")
     prontuario = input("Prontuário médico (texto livre): ")
-    cifrado = cifrar(prontuario)
+    
+    prontuario_cifrado = cifrar(prontuario) # cifra aqui!
+
     try:
-        id_pac = adicionar_paciente(nome, data_nasc, genero, contato)
+        id_pac = adicionar_paciente(nome, data_nasc, genero, contato, prontuario_cifrado)
         gravar_log(user[0], "add_paciente", "sucesso")
         print(f"Paciente adicionado com ID: {id_pac}")
     except Exception as e:
