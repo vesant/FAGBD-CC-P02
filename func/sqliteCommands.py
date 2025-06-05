@@ -556,7 +556,6 @@ if __name__ == "__main__":
 
     # adiciona paciente com prontuário cifrado
     # exemplo: paciente chamado "John Henry Giles"
-    from main import cifrar
     prontuario_john = "Histórico de esclerose lateral amiotrófica; respirador mecânico temporário."
     id_paciente = adicionar_paciente(
         "John Henry Giles", "1962-09-18", "M", "+1-555-3000", cifrar(prontuario_john)
