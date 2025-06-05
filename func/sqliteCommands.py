@@ -33,7 +33,7 @@ def adicionar_paciente(nome, data_nascimento, genero, contato, prontuario):
 
 # vai tualizar os dados de um paciente.
 # retorna quantas linhas foram efetivamente modificadas (0 / 1).
-def editar_paciente(id_paciente, nome=None, data_nascimento=None, genero=None, contato=None):
+def editar_paciente(id_paciente, nome=None, data_nascimento=None, genero=None, contato=None, prontuario=None):
     # - id_paciente;
     # - nome, data_nascimento, genero, contato;
     partes = []
@@ -50,7 +50,10 @@ def editar_paciente(id_paciente, nome=None, data_nascimento=None, genero=None, c
         valores.append(genero)
     if contato is not None:
         partes.append("contato = ?")
-        valores.append(contato)
+        valores.append(contato)^
+    if prontuario is not None:
+        partes.append("prontuario = ?")
+        valores.append(prontuario)
 
     # se não houver nada para atualizar, sai logo!
     if not partes:
