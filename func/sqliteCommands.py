@@ -530,33 +530,54 @@ if __name__ == "__main__":
     admin_id = adicionar_user("adm1", "proj2025@", "admin")
     print("Admin criado com ID:", admin_id)
 
-    # adiciona um paciente
-    id_paciente = adicionar_paciente("Ana Silva", "1990-05-12", "F", "+351912345678")
+    # cria médicos da serie House M.D.
+    id_house = adicionar_medico("Dr. Gregory House", "Diagnóstico", "+1-555-1000")
+    print("Médico criado com ID:", id_house)
+    id_wilson = adicionar_medico("Dr. James Wilson", "Oncologia", "+1-555-1001")
+    print("Médico criado com ID:", id_wilson)
+    id_cuddy = adicionar_medico("Dr. Lisa Cuddy", "Endocrinologia", "+1-555-1002")
+    print("Médico criado com ID:", id_cuddy)
+    id_chase = adicionar_medico("Dr. Robert Chase", "Cirurgia", "+1-555-1003")
+    print("Médico criado com ID:", id_chase)
+    id_foreman = adicionar_medico("Dr. Eric Foreman", "Neurologia", "+1-555-1004")
+    print("Médico criado com ID:", id_foreman)
+    id_cameron = adicionar_medico("Dr. Allison Cameron", "Imunologia", "+1-555-1005")
+    print("Médico criado com ID:", id_cameron)
+
+    # cria enfermeiros (usando nomes fictícios da serie)
+    id_nurse_brenda = adicionar_enfermeiro("Brenda Previn", "+1-555-2000")
+    print("Enfermeiro criado com ID:", id_nurse_brenda)
+    id_nurse_jeffrey = adicionar_enfermeiro("Jeffrey Sparkman", "+1-555-2001")
+    print("Enfermeiro criado com ID:", id_nurse_jeffrey)
+
+    # adiciona paciente com prontuário cifrado
+    # exemplo: paciente chamado "John Henry Giles"
+    from main import cifrar
+    prontuario_john = "Histórico de esclerose lateral amiotrófica; respirador mecânico temporário."
+    id_paciente = adicionar_paciente(
+        "John Henry Giles", "1962-09-18", "M", "+1-555-3000", cifrar(prontuario_john)
+    )
     print("Paciente criado com ID:", id_paciente)
 
-    # adiciona um medico
-    id_medico = adicionar_medico("Dr. João", "Cardiologia", "+351912300000")
-    print("Médico criado com ID:", id_medico)
-
-    # agenda uma consulta
-    id_consulta = agendar_consulta(id_paciente, id_medico, "2025-06-05 14:30", "agendada")
+    # agenda uma consulta entre House e o paciente
+    id_consulta = agendar_consulta(id_paciente, id_house, "2025-06-05 14:30", "agendada")
     print("Consulta agendada com ID:", id_consulta)
 
     # adiciona um tratamento
-    id_trat = adicionar_tratamento(id_paciente, "Tratamento de rotina", "2025-06-06")
+    id_trat = adicionar_tratamento(id_paciente, "Tratamento imunossupressor experimental", "2025-06-06")
     print("Tratamento inserido com ID:", id_trat)
 
-    # adiciona uma prescrição
-    id_presc = adicionar_prescricao(id_paciente, id_medico, "Paracetamol", "2025-06-05")
+    # adiciona uma prescrição feita pelo Dr. Foreman
+    id_presc = adicionar_prescricao(id_paciente, id_foreman, "Ciclofosfamida", "2025-06-05")
     print("Prescrição inserida com ID:", id_presc)
 
     # grava acesso em log
     log_id = gravar_log(admin_id, "login", "sucesso")
     print("Log de acesso criado com ID:", log_id)
 
-    # mostra pacientes com nome "Ana"
-    pacientes = buscar_paciente_por_nome("Ana")
-    print("Pacientes encontrados (por nome 'Ana'):", pacientes)
+    # mostra pacientes com nome "John"
+    pacientes = buscar_paciente_por_nome("John")
+    print("Pacientes encontrados (por nome 'John'):", pacientes)
 
     # conta o total de pacientes
     total_pacs = contar_registros("Paciente")
