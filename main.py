@@ -414,6 +414,45 @@ def visualizar_log_menu(user):
         print(l)
     espera()
 
+def excluir_paciente_menu(user):
+    clear()
+    print("#==# Excluir Paciente #==#")
+    idp = int(input("ID do paciente a excluir: "))
+    afetados = excluir_paciente(idp)
+    if afetados:
+        print("Paciente excluído com sucesso.")
+        gravar_log(user[0], "excluir_paciente", "sucesso")
+    else:
+        print("ID não encontrado.")
+        gravar_log(user[0], "excluir_paciente", "falha")
+    espera()
+
+def excluir_medico_menu(user):
+    clear()
+    print("#==# Excluir Médico #==#")
+    idm = int(input("ID do médico a excluir: "))
+    afetados = excluir_medico(idm)
+    if afetados:
+        print("Médico excluído com sucesso.")
+        gravar_log(user[0], "excluir_medico", "sucesso")
+    else:
+        print("ID não encontrado.")
+        gravar_log(user[0], "excluir_medico", "falha")
+    espera()
+
+def excluir_enfermeiro_menu(user):
+    clear()
+    print("#==# Excluir Enfermeiro #==#")
+    ide = int(input("ID do enfermeiro a excluir: "))
+    afetados = excluir_enfermeiro(ide)
+    if afetados:
+        print("Enfermeiro excluído com sucesso.")
+        gravar_log(user[0], "excluir_enfermeiro", "sucesso")
+    else:
+        print("ID não encontrado.")
+        gravar_log(user[0], "excluir_enfermeiro", "falha")
+    espera()
+
 # -------------------------------------------- #
 # menus proprios para o paciente ou enfermeiro #
 # -------------------------------------------- #
