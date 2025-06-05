@@ -358,9 +358,9 @@ def visualizar_tratamentos_menu(user):
     clear()
     print("#==# Visualizar Tratamentos de um Paciente #==#")
     idp = int(input("ID do paciente: "))
-    tratamentos = buscar_tratamentos_paciente(idp)
+    tratamentos = buscar_tratamentos_paciente_com_medico(idp)
     for t in tratamentos:
-        print(t)
+        print(f"ID: {t[0]}, Descrição: {t[1]}, Data: {t[2]}, Médico: {t[3] or '---'}")
     gravar_log(user[0], "visualizar_tratamentos", "sucesso")
     espera()
 
