@@ -306,6 +306,7 @@ def adicionar_prescricao_menu(user):
 def visualizar_pacientes_menu(user):
     clear()
     print("#==# Buscar Pacientes #==#")
+    print("(deixe em branco para vizualizar todos)")
     print("1. Por nome")
     print("2. Por contato")
     op = input("Opção: ")
