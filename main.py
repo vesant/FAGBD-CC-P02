@@ -7,37 +7,46 @@
 import getpass
 import datetime
 from func.sqliteCommands import *
+from colorama import init, Fore, Style
+init(autoreset=True)
 
 # -------------------------- #
 # Funções auxiliares simples #
 # -------------------------- #
 
+# vai fazer a lógica da função 'clear'
 def clear():
     print("\n" * 100)
 
+# vai fazer a lógica da função 'cifrar'
 def cifrar(texto):
     # simples cifragem reversa 
     # apenas para cumprir requisito: "O prontuário do paciente deve ser gravado de forma cifrada."
     return texto[::-1]
 
+# vai fazer a lógica da função 'decifrar'
 def decifrar(texto_cifrado):
     return texto_cifrado[::-1]
 
+# vai fazer a lógica da função 'espera'
 def espera():
     input("\nClique ENTER para continuar...")
 
+# vai fazer a lógica da função 'listar_pacientes_simples'
 def listar_pacientes_simples():
     pacientes = buscar_paciente_por_nome("")
     print("\nPacientes disponíveis:")
     for p in pacientes:
         print(f"ID: {p[0]} | Nome: {p[1]}")
 
+# vai fazer a lógica da função 'listar_medicos_simples'
 def listar_medicos_simples():
     medicos = buscar_medico_por_nome("")
     print("\nMédicos disponíveis:")
     for m in medicos:
         print(f"ID: {m[0]} | Nome: {m[1]} | Especialidade: {m[2]}")
 
+# vai fazer a lógica da função 'listar_enfermeiros_simples'
 def listar_enfermeiros_simples():
     enfers = buscar_enfermeiro_por_nome("")
     print("\nEnfermeiros disponíveis:")
@@ -48,19 +57,20 @@ def listar_enfermeiros_simples():
 #           LOGIN             #
 # --------------------------- #
 
+# vai fazer a lógica da função 'login'
 def login():
     clear()
-    print("#======# LOGIN NO SISTEMA #======#")
+    print(Fore.CYAN + Style.BRIGHT + "#======# LOGIN NO SISTEMA #======#")
     login = input("Username: ")
     senha = getpass.getpass("Password: ")
 
     user = autenticar_user(login, senha)
     if user:
         gravar_log(user[0], "login", "sucesso")
-        print("Login efetuado com sucesso!\n")
+        print(Fore.GREEN + "Login efetuado com sucesso!\n")
         return user
     else:
-        print("Username ou password incorretos.")
+        print(Fore.RED + "Username ou password incorretos.")
         espera()
         return None
 
@@ -71,7 +81,7 @@ def login():
 def menu_admin(user):
     while True:
         clear()
-        print("#=====# Menu Administrador #=====#")
+        print(Fore.CYAN + Style.BRIGHT + "#=====# Menu Administrador #=====#")
         print("1. Adicionar Paciente")
         print("2. Adicionar Médico ou Enfermeiro")
         print("3. Agendar Consulta")
