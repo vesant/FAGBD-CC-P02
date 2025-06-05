@@ -1,17 +1,34 @@
 import sqlite3
 from typing import List, Tuple, Optional
-import os
+import os, sys
 
 # ----------------- #
 # funçao de conexao #
 # ----------------- #
 
 # vai abrir (ou criar) a db SQLite e retorna o objeto de conexao
-def conectar(db_path: str = None) -> sqlite3.Connection:
+'''def conectar(db_path: str = None) -> sqlite3.Connection:
     if not db_path:
         # caminho absoluto para db/dbHospital.db, não importa de onde corre o script!
         db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db", "dbHospital.db")
     # print("DEBUG - Caminho absoluto para a base de dados:", db_path) # debug
+    return sqlite3.connect(db_path)
+'''
+
+def conectar():
+    # vai localizar corretamente o caminho da base de dados mesmo quando embutido no .exe
+    if getattr(sys, 'frozen', False):
+        base_path = os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+
+    # caminho real para a pasta db
+    db_path = os.path.join(base_path, "..", "db", "dbHospital.db")
+
+    # garante que o ficheiro existe, ou dá erro explícito
+    if not os.path.exists(db_path):
+        raise FileNotFoundError(f"Base de dados não encontrada em: {db_path}")
+
     return sqlite3.connect(db_path)
 
 # ---------------------- #
