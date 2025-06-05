@@ -502,6 +502,24 @@ def obter_colunas(tabela):
     colunas = [item[1] for item in info]
     return colunas
 
+# vai retornar os tratamentos do paciente, mostrando o nome do médico que prescreveu 
+# (join entre Tratamento, Prescricao e Medico).
+def buscar_tratamentos_paciente_com_medico(id_paciente):
+    conn = conectar()
+    cursor = conn.cursor()
+    sql = """
+        SELECT t.id_tratamento, t.descricao, t.data_tratamento, m.nome as nome_medico
+        FROM Tratamento t
+        LEFT JOIN Prescricao p ON t.id_paciente = p.id_paciente AND t.data_tratamento = p.data_prescricao
+        LEFT JOIN Medico m ON p.id_medico = m.id_medico
+        WHERE t.id_paciente = ?
+        ORDER BY t.data_tratamento DESC;
+    """
+    cursor.execute(sql, (id_paciente,))
+    resultados = cursor.fetchall()
+    conn.close()
+    return resultados
+
 # ----- #
 # debug #
 # ----- #
