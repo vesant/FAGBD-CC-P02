@@ -80,30 +80,29 @@ def login():
 # vai fazer o registo de um novo paciente com cifragem do prontuário
 def adicionar_paciente_menu(user):
     clear()
-    print(Fore.CYAN + Style.BRIGHT + "#==# Adicionar Paciente #==#")
+    console.print(Panel("#==# Adicionar Paciente #==#"))
     nome = input("Nome: ")
     data_nasc = input("Data de nascimento (YYYY-MM-DD): ")
     genero = input("Gênero: ")
     contato = input("Contato: ")
     prontuario = input("Prontuário médico (texto livre): ")
-
-    prontuario_cifrado = cifrar(prontuario)
+    prontuario_cifrado = cifrar(prontuario)  # cifra aqui!
 
     try:
         id_pac = adicionar_paciente(nome, data_nasc, genero, contato, prontuario_cifrado)
         gravar_log(user[0], "add_paciente", "sucesso")
-        print(f"Paciente adicionado com ID: {id_pac}")
+        console.print(f"[green]Paciente adicionado com ID: {id_pac}[/green]")
     except Exception as e:
         gravar_log(user[0], "add_paciente", "falha")
-        print("Erro ao adicionar paciente:", str(e))
+        console.print(f"[red]Erro ao adicionar paciente:[/red] {e}")
     espera()
 
 # vai adicionar médico ou enfermeiro conforme a escolha
 def adicionar_funcionario_menu(user):
     clear()
-    print(Fore.CYAN + Style.BRIGHT + "#==# Adicionar Funcionário #==#")
-    print("1. Médico")
-    print("2. Enfermeiro")
+    console.print(Panel("#==# Adicionar Funcionário #==#"))
+    console.print("1. Médico")
+    console.print("2. Enfermeiro")
     tipo = input("Opção: ")
     nome = input("Nome: ")
     contato = input("Contato: ")
@@ -112,26 +111,26 @@ def adicionar_funcionario_menu(user):
         try:
             idm = adicionar_medico(nome, espec, contato)
             gravar_log(user[0], "add_medico", "sucesso")
-            print(f"Médico adicionado com ID: {idm}")
+            console.print(f"[green]Médico adicionado com ID: {idm}[/green]")
         except Exception as e:
             gravar_log(user[0], "add_medico", "falha")
-            print("Erro ao adicionar médico:", str(e))
+            console.print(f"[red]Erro ao adicionar médico:[/red] {e}")
     elif tipo == "2":
         try:
             ide = adicionar_enfermeiro(nome, contato)
             gravar_log(user[0], "add_enfermeiro", "sucesso")
-            print(f"Enfermeiro adicionado com ID: {ide}")
+            console.print(f"[green]Enfermeiro adicionado com ID: {ide}[/green]")
         except Exception as e:
             gravar_log(user[0], "add_enfermeiro", "falha")
-            print("Erro ao adicionar enfermeiro:", str(e))
+            console.print(f"[red]Erro ao adicionar enfermeiro:[/red] {e}")
     else:
-        print("Opção inválida!")
+        console.print("[yellow]Opção inválida![/yellow]")
     espera()
 
 # vai agendar uma consulta com paciente e médico
 def agendar_consulta_menu(user):
     clear()
-    print(Fore.CYAN + Style.BRIGHT + "#==# Agendar Consulta #==#")
+    console.print(Panel("#==# Agendar Consulta #==#"))
     try:
         listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
@@ -141,16 +140,17 @@ def agendar_consulta_menu(user):
         status = "agendada"
         idc = agendar_consulta(id_pac, id_med, data_cons, status)
         gravar_log(user[0], "agendar_consulta", "sucesso")
-        print(f"Consulta agendada com ID: {idc}")
+        console.print(f"[green]Consulta agendada com ID: {idc}[/green]")
     except Exception as e:
         gravar_log(user[0], "agendar_consulta", "falha")
-        print("Erro ao agendar consulta:", str(e))
+        console.print(f"[red]Erro ao agendar consulta:[/red] {e}")
     espera()
 
-# vai adicionar tratamento ao paciente
+
+# vai adicionar um tratamento a um paciente
 def adicionar_tratamento_menu(user):
     clear()
-    print(Fore.CYAN + Style.BRIGHT + "#==# Adicionar Tratamento #==#")
+    console.print(Panel("#==# Adicionar Tratamento #==#"))
     try:
         listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
@@ -158,16 +158,16 @@ def adicionar_tratamento_menu(user):
         data_trat = input("Data do tratamento (YYYY-MM-DD): ")
         idt = adicionar_tratamento(id_pac, descricao[:1024], data_trat)
         gravar_log(user[0], "add_tratamento", "sucesso")
-        print(f"Tratamento adicionado com ID: {idt}")
+        console.print(f"[green]Tratamento adicionado com ID: {idt}[/green]")
     except Exception as e:
         gravar_log(user[0], "add_tratamento", "falha")
-        print("Erro ao adicionar tratamento:", str(e))
+        console.print(f"[red]Erro ao adicionar tratamento:[/red] {e}")
     espera()
 
-# vai adicionar uma prescrição para um paciente
+# vai adicionar uma prescrição a um paciente
 def adicionar_prescricao_menu(user):
     clear()
-    print(Fore.CYAN + Style.BRIGHT + "#==# Adicionar Prescrição #==#")
+    console.print(Panel("#==# Adicionar Prescrição #==#"))
     try:
         listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
@@ -177,18 +177,19 @@ def adicionar_prescricao_menu(user):
         data_presc = input("Data da prescrição (YYYY-MM-DD): ")
         idp = adicionar_prescricao(id_pac, id_med, medicamento, data_presc)
         gravar_log(user[0], "add_prescricao", "sucesso")
-        print(f"Prescrição adicionada com ID: {idp}")
+        console.print(f"[green]Prescrição adicionada com ID: {idp}[/green]")
     except Exception as e:
         gravar_log(user[0], "add_prescricao", "falha")
-        print("Erro ao adicionar prescrição:", str(e))
+        console.print(f"[red]Erro ao adicionar prescrição:[/red] {e}")
     espera()
 
+# vai buscar e mostrar pacientes com output limpo
 def visualizar_pacientes_menu(user):
     clear()
-    print(Fore.CYAN + Style.BRIGHT + "#==# Buscar Pacientes #==#")
-    print("(deixe em branco para vizualizar todos)")
-    print("1. Por nome")
-    print("2. Por contato")
+    console.print(Panel("#==# Buscar Pacientes #==#"))
+    console.print("(deixe em branco para visualizar todos)")
+    console.print("1. Por nome")
+    console.print("2. Por contato")
     op = input("Opção: ")
     if op == "1":
         nome = input("Nome: ")
@@ -196,62 +197,54 @@ def visualizar_pacientes_menu(user):
     else:
         contato = input("Contato: ")
         pacientes = buscar_paciente_por_contato(contato)
-    print("\nResultados:")
+
+    console.print("\n[bold]Resultados:[/bold]")
     if pacientes:
-        print("ID | Nome                 | Data Nasc. | Gênero | Contato")
-        print("-"*60)
         for pac in pacientes:
-            # (id_paciente, nome, data_nascimento, genero, contato, prontuario)
-            print(f"{pac[0]:<2} | {pac[1]:<20} | {pac[2]:<10} | {pac[3]:<6} | {pac[4]}")
+            console.print(f"[cyan]{pac[0]}[/cyan] | {pac[1]} | {pac[2]} | {pac[3]} | {pac[4]}")
     else:
-        print("Nenhum paciente encontrado.")
+        console.print("[yellow]Nenhum paciente encontrado.[/yellow]")
     gravar_log(user[0], "visualizar_pacientes", "sucesso")
     espera()
 
+# vai mostrar lista de médicos ou enfermeiros
 def visualizar_funcionarios_menu(user, so_medicos=False):
     clear()
     if so_medicos:
-        print(Fore.CYAN + Style.BRIGHT + "#==# Médicos #==#")
+        console.print(Panel("#==# Médicos #==#"))
         medicos = buscar_medico_por_nome("")
         if medicos:
-            print("ID | Nome                 | Especialidade       | Contato")
-            print("-"*65)
             for m in medicos:
-                # (id_medico, nome, especialidade, contato)
-                print(f"{m[0]:<2} | {m[1]:<20} | {m[2]:<18} | {m[3]}")
+                console.print(f"[cyan]{m[0]}[/cyan] | {m[1]} | {m[2]} | {m[3]}")
         else:
-            print("Nenhum médico encontrado.")
+            console.print("[yellow]Nenhum médico encontrado.[/yellow]")
     else:
-        print("1. Médicos\n2. Enfermeiros")
+        console.print("1. Médicos\n2. Enfermeiros")
         op = input("Opção: ")
         if op == "1":
             medicos = buscar_medico_por_nome("")
             if medicos:
-                print("ID | Nome                 | Especialidade       | Contato")
-                print("-"*65)
                 for m in medicos:
-                    print(f"{m[0]:<2} | {m[1]:<20} | {m[2]:<18} | {m[3]}")
+                    console.print(f"[cyan]{m[0]}[/cyan] | {m[1]} | {m[2]} | {m[3]}")
             else:
-                print("Nenhum médico encontrado.")
+                console.print("[yellow]Nenhum médico encontrado.[/yellow]")
         else:
             enfers = buscar_enfermeiro_por_nome("")
             if enfers:
-                print("ID | Nome                 | Contato")
-                print("-"*40)
                 for e in enfers:
-                    # (id_enfermeiro, nome, contato)
-                    print(f"{e[0]:<2} | {e[1]:<20} | {e[2]}")
+                    console.print(f"[cyan]{e[0]}[/cyan] | {e[1]} | {e[2]}")
             else:
-                print("Nenhum enfermeiro encontrado.")
+                console.print("[yellow]Nenhum enfermeiro encontrado.[/yellow]")
     gravar_log(user[0], "visualizar_funcionarios", "sucesso")
     espera()
 
+# vai modificar o contato de um utilizador (paciente/médico/enfermeiro)
 def modificar_contato_menu(user):
     clear()
-    print("#==# Modificar Contato #==#")
-    print("1. Paciente")
-    print("2. Médico")
-    print("3. Enfermeiro")
+    console.print(Panel("#==# Modificar Contato #==#"))
+    console.print("1. Paciente")
+    console.print("2. Médico")
+    console.print("3. Enfermeiro")
     op = input("Qual tipo de utilizador? ")
     try:
         if op == "1":
@@ -269,135 +262,167 @@ def modificar_contato_menu(user):
         elif op == "3":
             editar_enfermeiro(id, contato=novo_contato)
         else:
-            print("Opção inválida!")
+            console.print("[yellow]Opção inválida![/yellow]")
             return
         gravar_log(user[0], "modificar_contato", "sucesso")
-        print("Contato atualizado!")
+        console.print("[green]Contato atualizado![/green]")
     except Exception as e:
         gravar_log(user[0], "modificar_contato", "falha")
-        print("Erro:", str(e))
+        console.print(f"[red]Erro:[/red] {e}")
     espera()
 
+# vai mostrar consultas por data ou intervalo
 def visualizar_consultas_menu(user, so_meu_medico=False):
     clear()
-    print("#==# Visualizar Consultas #==#")
-    print("1. Por dia")
-    print("2. Por intervalo")
+    console.print(Panel("#==# Visualizar Consultas #==#"))
+    console.print("1. Por dia")
+    console.print("2. Por intervalo")
     op = input("Opção: ")
-    if op == "1":
-        data = input("Data (YYYY-MM-DD): ")
-        consultas = buscar_consultas_por_data(data)
-    else:
-        data1 = input("Data início (YYYY-MM-DD): ")
-        data2 = input("Data fim (YYYY-MM-DD): ")
-        consultas = buscar_consultas_intervalo(data1, data2)
-    for c in consultas:
-        print(c)
-    gravar_log(user[0], "visualizar_consultas", "sucesso")
+    try:
+        if op == "1":
+            data = input("Data (YYYY-MM-DD): ")
+            consultas = buscar_consultas_por_data(data)
+        else:
+            data1 = input("Data início (YYYY-MM-DD): ")
+            data2 = input("Data fim (YYYY-MM-DD): ")
+            consultas = buscar_consultas_intervalo(data1, data2)
+        for c in consultas:
+            console.print(c)
+        gravar_log(user[0], "visualizar_consultas", "sucesso")
+    except Exception as e:
+        console.print(f"[red]Erro ao buscar consultas:[/red] {e}")
     espera()
 
+# vai mostrar os tratamentos de um paciente com info do médico
 def visualizar_tratamentos_menu(user):
     clear()
-    print("#==# Visualizar Tratamentos de um Paciente #==#")
-    listar_pacientes_simples()
-    idp = int(input("ID do paciente: "))
-    tratamentos = buscar_tratamentos_paciente_com_medico(idp)
-    for t in tratamentos:
-        print(f"ID: {t[0]}, Descrição: {t[1]}, Data: {t[2]}, Médico: {t[3] or '---'}")
-    gravar_log(user[0], "visualizar_tratamentos", "sucesso")
+    console.print(Panel("#==# Visualizar Tratamentos #==#"))
+    try:
+        listar_pacientes_simples()
+        idp = int(input("ID do paciente: "))
+        tratamentos = buscar_tratamentos_paciente_com_medico(idp)
+        for t in tratamentos:
+            console.print(f"ID: {t[0]}, Descrição: {t[1]}, Data: {t[2]}, Médico: {t[3] or '---'}")
+        gravar_log(user[0], "visualizar_tratamentos", "sucesso")
+    except Exception as e:
+        console.print(f"[red]Erro:[/red] {e}")
     espera()
 
+# vai mostrar prescrições feitas por médico, com filtros
 def visualizar_prescricoes_menu(user, so_meu_medico=False):
     clear()
-    print("#==# Visualizar Prescrições #==#")
-    if so_meu_medico:
-        id_med = user[0]  # assume que o id_user = id_medico
-    else:
-        listar_medicos_simples()
-        id_med = int(input("ID do médico: "))
-    print("1. Por período")
-    print("2. Por faixa etária e período")
-    op = input("Opção: ")
-    data1 = input("Data início (YYYY-MM-DD): ")
-    data2 = input("Data fim (YYYY-MM-DD): ")
-    if op == "1":
-        prescricoes = buscar_prescricoes_por_medico_periodo(id_med, data1, data2)
-    else:
-        idade_min = int(input("Idade mínima: "))
-        idade_max = int(input("Idade máxima: "))
-        prescricoes = buscar_prescricoes_medico_idade(id_med, idade_min, idade_max, data1, data2)
-    for p in prescricoes:
-        print(p)
-    gravar_log(user[0], "visualizar_prescricoes", "sucesso")
-    espera()
-
-def visualizar_tabela_menu(user):
-    clear()
-    print("#==# Visualizar conteúdo de uma tabela #==#")
-    tabela = input("Nome da tabela: ")
-    dados = buscar_todos_conteudo_tabela(tabela)
-    for d in dados:
-        print(d)
-    gravar_log(user[0], f"visualizar_tabela_{tabela}", "sucesso")
-    espera()
-
-def visualizar_log_menu(user):
-    clear()
-    print("#==# Visualizar Log de Acessos #==#")
-    print("1. Por período")
-    print("2. Por utilizador")
-    op = input("Opção: ")
-    if op == "1":
+    console.print(Panel("#==# Visualizar Prescrições #==#"))
+    try:
+        if so_meu_medico:
+            id_med = user[0]
+        else:
+            listar_medicos_simples()
+            id_med = int(input("ID do médico: "))
+        console.print("1. Por período")
+        console.print("2. Por faixa etária e período")
+        op = input("Opção: ")
         data1 = input("Data início (YYYY-MM-DD): ")
         data2 = input("Data fim (YYYY-MM-DD): ")
-        logs = buscar_logs_por_periodo(data1, data2)
-    else:
-        id_user = int(input("ID do utilizador: "))
-        logs = buscar_logs_por_user(id_user)
-    for l in logs:
-        print(l)
+        if op == "1":
+            prescricoes = buscar_prescricoes_por_medico_periodo(id_med, data1, data2)
+        else:
+            idade_min = int(input("Idade mínima: "))
+            idade_max = int(input("Idade máxima: "))
+            prescricoes = buscar_prescricoes_medico_idade(id_med, idade_min, idade_max, data1, data2)
+        for p in prescricoes:
+            console.print(p)
+        gravar_log(user[0], "visualizar_prescricoes", "sucesso")
+    except Exception as e:
+        console.print(f"[red]Erro:[/red] {e}")
     espera()
 
+# vai mostrar conteúdo de uma tabela à escolha
+def visualizar_tabela_menu(user):
+    clear()
+    console.print(Panel("#==# Visualizar Tabela #==#"))
+    tabela = input("Nome da tabela: ")
+    try:
+        dados = buscar_todos_conteudo_tabela(tabela)
+        for d in dados:
+            console.print(d)
+        gravar_log(user[0], f"visualizar_tabela_{tabela}", "sucesso")
+    except Exception as e:
+        console.print(f"[red]Erro:[/red] {e}")
+    espera()
+
+# vai mostrar logs de acessos
+def visualizar_log_menu(user):
+    clear()
+    console.print(Panel("#==# Log de Acessos #==#"))
+    console.print("1. Por período")
+    console.print("2. Por utilizador")
+    op = input("Opção: ")
+    try:
+        if op == "1":
+            data1 = input("Data início (YYYY-MM-DD): ")
+            data2 = input("Data fim (YYYY-MM-DD): ")
+            logs = buscar_logs_por_periodo(data1, data2)
+        else:
+            id_user = int(input("ID do utilizador: "))
+            logs = buscar_logs_por_user(id_user)
+        for l in logs:
+            console.print(l)
+    except Exception as e:
+        console.print(f"[red]Erro:[/red] {e}")
+    espera()
+
+# vai excluir um paciente
 def excluir_paciente_menu(user):
     clear()
-    print("#==# Excluir Paciente #==#")
+    console.print(Panel("#==# Excluir Paciente #==#"))
     listar_pacientes_simples()
     idp = int(input("ID do paciente a excluir: "))
-    afetados = excluir_paciente(idp)
-    if afetados:
-        print("Paciente excluído com sucesso.")
-        gravar_log(user[0], "excluir_paciente", "sucesso")
-    else:
-        print("ID não encontrado.")
-        gravar_log(user[0], "excluir_paciente", "falha")
+    try:
+        afetados = excluir_paciente(idp)
+        if afetados:
+            console.print("[green]Paciente excluído com sucesso.[/green]")
+            gravar_log(user[0], "excluir_paciente", "sucesso")
+        else:
+            console.print("[yellow]ID não encontrado.[/yellow]")
+            gravar_log(user[0], "excluir_paciente", "falha")
+    except Exception as e:
+        console.print(f"[red]Erro:[/red] {e}")
     espera()
 
+# vai excluir um médico
 def excluir_medico_menu(user):
     clear()
-    print("#==# Excluir Médico #==#")
+    console.print(Panel("#==# Excluir Médico #==#"))
     listar_medicos_simples()
     idm = int(input("ID do médico a excluir: "))
-    afetados = excluir_medico(idm)
-    if afetados:
-        print("Médico excluído com sucesso.")
-        gravar_log(user[0], "excluir_medico", "sucesso")
-    else:
-        print("ID não encontrado.")
-        gravar_log(user[0], "excluir_medico", "falha")
+    try:
+        afetados = excluir_medico(idm)
+        if afetados:
+            console.print("[green]Médico excluído com sucesso.[/green]")
+            gravar_log(user[0], "excluir_medico", "sucesso")
+        else:
+            console.print("[yellow]ID não encontrado.[/yellow]")
+            gravar_log(user[0], "excluir_medico", "falha")
+    except Exception as e:
+        console.print(f"[red]Erro:[/red] {e}")
     espera()
 
+# vai excluir um enfermeiro
 def excluir_enfermeiro_menu(user):
     clear()
-    print("#==# Excluir Enfermeiro #==#")
+    console.print(Panel("#==# Excluir Enfermeiro #==#"))
     listar_enfermeiros_simples()
     ide = int(input("ID do enfermeiro a excluir: "))
-    afetados = excluir_enfermeiro(ide)
-    if afetados:
-        print("Enfermeiro excluído com sucesso.")
-        gravar_log(user[0], "excluir_enfermeiro", "sucesso")
-    else:
-        print("ID não encontrado.")
-        gravar_log(user[0], "excluir_enfermeiro", "falha")
+    try:
+        afetados = excluir_enfermeiro(ide)
+        if afetados:
+            console.print("[green]Enfermeiro excluído com sucesso.[/green]")
+            gravar_log(user[0], "excluir_enfermeiro", "sucesso")
+        else:
+            console.print("[yellow]ID não encontrado.[/yellow]")
+            gravar_log(user[0], "excluir_enfermeiro", "falha")
+    except Exception as e:
+        console.print(f"[red]Erro:[/red] {e}")
     espera()
 
 # -------------------------------------------- #
