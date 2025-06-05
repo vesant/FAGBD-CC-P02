@@ -73,6 +73,140 @@ def login():
         espera()
         return None
 
+# ---------------- #
+# menus do sistema #
+# ---------------- #
+
+def menu_admin(user):
+    while True:
+        clear()
+        print(Panel("#=====# Menu Administrador #=====#"))
+        print("1. Adicionar Paciente")
+        print("2. Adicionar Médico ou Enfermeiro")
+        print("3. Agendar Consulta")
+        print("4. Adicionar Tratamento")
+        print("5. Adicionar Prescrição")
+        print("6. Visualizar Pacientes")
+        print("7. Visualizar Médicos ou Enfermeiros")
+        print("8. Modificar contactos")
+        print("9. Visualizar Consultas")
+        print("10. Visualizar Tratamentos de um Paciente")
+        print("11. Visualizar Prescrições por Médico/Período")
+        print("12. Visualizar funcionários médicos")
+        print("13. Visualizar conteúdo de tabelas")
+        print("14. Visualizar log de acessos")
+        print("15. Excluir Paciente")
+        print("16. Excluir Médico")
+        print("17. Excluir Enfermeiro")
+        print("18. Sair")
+        op = input("Opção: ")
+
+        if op == "1":
+            adicionar_paciente_menu(user)
+        elif op == "2":
+            adicionar_funcionario_menu(user)
+        elif op == "3":
+            agendar_consulta_menu(user)
+        elif op == "4":
+            adicionar_tratamento_menu(user)
+        elif op == "5":
+            adicionar_prescricao_menu(user)
+        elif op == "6":
+            visualizar_pacientes_menu(user)
+        elif op == "7":
+            visualizar_funcionarios_menu(user)
+        elif op == "8":
+            modificar_contato_menu(user)
+        elif op == "9":
+            visualizar_consultas_menu(user)
+        elif op == "10":
+            visualizar_tratamentos_menu(user)
+        elif op == "11":
+            visualizar_prescricoes_menu(user)
+        elif op == "12":
+            visualizar_funcionarios_menu(user, so_medicos=True)
+        elif op == "13":
+            visualizar_tabela_menu(user)
+        elif op == "14":
+            visualizar_log_menu(user)
+        elif op == "15":
+            excluir_paciente_menu(user)
+        elif op == "16":
+            excluir_medico_menu(user)
+        elif op == "17":
+            excluir_enfermeiro_menu(user)
+        elif op == "18":
+            break
+        else:
+            console.print("[yellow]Opção inválida![/yellow]")
+            espera()
+
+def menu_paciente(user):
+    while True:
+        clear()
+        print(Panel("#=====# Menu Paciente #=====#"))
+        print("1. Ver as minhas informações")
+        print("2. Modificar os meus dados")
+        print("3. Ver as minhas consultas")
+        print("4. Ver os meus tratamentos")
+        print("5. Sair")
+        op = input("Opção: ")
+        if op == "1":
+            visualizar_meu_perfil(user)
+        elif op == "2":
+            modificar_meus_dados_menu(user)
+        elif op == "3":
+            visualizar_minhas_consultas(user)
+        elif op == "4":
+            visualizar_meus_tratamentos(user)
+        elif op == "5":
+            break
+        else:
+            console.print("[yellow]Opção inválida![/yellow]")
+            espera()
+
+def menu_medico(user):
+    while True:
+        clear()
+        print(Panel("#=====# Menu Médico #=====#"))
+        print("1. Visualizar os meus pacientes")
+        print("2. Visualizar as minhas prescrições")
+        print("3. Visualizar as minhas consultas")
+        print("4. Sair")
+        op = input("Opção: ")
+        if op == "1":
+            visualizar_pacientes_menu(user)
+        elif op == "2":
+            visualizar_prescricoes_menu(user, so_meu_medico=True)
+        elif op == "3":
+            visualizar_consultas_menu(user, so_meu_medico=True)
+        elif op == "4":
+            break
+        else:
+            console.print("[yellow]Opção inválida![/yellow]")
+            espera()
+
+def menu_enfermeiro(user):
+    while True:
+        clear()
+        print(Panel("#=====# Menu Enfermeiro #=====#"))
+        print("1. Visualizar os meus dados")
+        print("2. Modificar os meu contactos")
+        print("3. Visualizar as consultas dos pacientes")
+        print("4. Sair")
+        op = input("Opção: ")
+        if op == "1":
+            visualizar_meu_perfil(user)
+        elif op == "2":
+            modificar_meus_dados_menu(user)
+        elif op == "3":
+            visualizar_consultas_menu(user)
+        elif op == "4":
+            break
+        else:
+            console.print("[yellow]Opção inválida![/yellow]")
+            espera()
+
 # ----------------- #
 # funçoes dos menus #
 # ----------------- #
