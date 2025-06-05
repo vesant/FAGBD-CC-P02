@@ -19,18 +19,21 @@ def conectar(db_path: str = None) -> sqlite3.Connection:
 # ---------------------- #
 
 # vai inserir um novo paciente e retorna o ID gerado automaticamente
-def adicionar_paciente(nome, data_nascimento, genero, contato):
+def adicionar_paciente(nome, data_nascimento, genero, contato, prontuario):
+    """
+    Adiciona um paciente à base de dados, cifrando o prontuário.
+    Alterado para incluir o campo 'prontuario' e usar cifragem.
+    """
+    from cifragem import cifrar  # Se tua função estiver noutro ficheiro, importa.
+    prontuario_cifrado = cifrar(prontuario)
     conn = conectar()
     cursor = conn.cursor()
-    sql = """
-        INSERT INTO Paciente (nome, data_nascimento, genero, contato)
-        VALUES (?, ?, ?, ?);
-    """
-    cursor.execute(sql, (nome, data_nascimento, genero, contato))
+    cursor.execute(
+        "INSERT INTO Paciente (nome, data_nascimento, genero, contato, prontuario) VALUES (?, ?, ?, ?, ?)",
+        (nome, data_nascimento, genero, contato, prontuario_cifrado)
+    )
     conn.commit()
-    novo_id = cursor.lastrowid
     conn.close()
-    return novo_id
 
 # vai tualizar os dados de um paciente.
 # retorna quantas linhas foram efetivamente modificadas (0 / 1).
