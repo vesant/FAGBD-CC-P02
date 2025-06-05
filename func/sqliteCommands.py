@@ -19,14 +19,13 @@ def conectar(db_path: str = None) -> sqlite3.Connection:
 # ---------------------- #
 
 # vai inserir um novo paciente e retorna o ID gerado automaticamente
-def adicionar_paciente(nome, data_nascimento, genero, contato):
+def adicionar_paciente(nome, data_nascimento, genero, contato, prontuario):
     conn = conectar()
     cursor = conn.cursor()
     sql = """
-        INSERT INTO Paciente (nome, data_nascimento, genero, contato)
-        VALUES (?, ?, ?, ?);
+        INSERT INTO Paciente (nome, data_nascimento, genero, contato, prontuario) VALUES (?, ?, ?, ?, ?)
     """
-    cursor.execute(sql, (nome, data_nascimento, genero, contato))
+    cursor.execute(sql, (nome, data_nascimento, genero, contato, prontuario))
     conn.commit()
     novo_id = cursor.lastrowid
     conn.close()
