@@ -530,6 +530,10 @@ if __name__ == "__main__":
     admin_id = adicionar_user("adm1", "proj2025@", "admin")
     print("Admin criado com ID:", admin_id)
 
+    # debug provisorio
+    def cifrar(texto):
+        return texto[::-1]
+
     # cria médicos da serie House M.D.
     id_house = adicionar_medico("Dr. Gregory House", "Diagnóstico", "+1-555-1000")
     print("Médico criado com ID:", id_house)
