@@ -50,7 +50,7 @@ def editar_paciente(id_paciente, nome=None, data_nascimento=None, genero=None, c
         valores.append(genero)
     if contato is not None:
         partes.append("contato = ?")
-        valores.append(contato)^
+        valores.append(contato)
     if prontuario is not None:
         partes.append("prontuario = ?")
         valores.append(prontuario)
