@@ -26,6 +26,24 @@ def decifrar(texto_cifrado):
 def espera():
     input("\nClique ENTER para continuar...")
 
+def listar_pacientes_simples():
+    pacientes = buscar_paciente_por_nome("")
+    print("\nPacientes disponíveis:")
+    for p in pacientes:
+        print(f"ID: {p[0]} | Nome: {p[1]}")
+
+def listar_medicos_simples():
+    medicos = buscar_medico_por_nome("")
+    print("\nMédicos disponíveis:")
+    for m in medicos:
+        print(f"ID: {m[0]} | Nome: {m[1]} | Especialidade: {m[2]}")
+
+def listar_enfermeiros_simples():
+    enfers = buscar_enfermeiro_por_nome("")
+    print("\nEnfermeiros disponíveis:")
+    for e in enfers:
+        print(f"ID: {e[0]} | Nome: {e[1]}")
+
 # --------------------------- #
 #           LOGIN             #
 # --------------------------- #
@@ -237,7 +255,9 @@ def agendar_consulta_menu(user):
     clear()
     print("#==# Agendar Consulta #==#")
     try:
+        listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
+        listar_medicos_simples()
         id_med = int(input("ID do médico: "))
         data_cons = input("Data da consulta (YYYY-MM-DD HH:MM): ")
         status = "agendada"
@@ -253,6 +273,7 @@ def adicionar_tratamento_menu(user):
     clear()
     print("#==# Adicionar Tratamento #==#")
     try:
+        listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
         descricao = input("Descrição do tratamento (máx 1024): ")
         data_trat = input("Data do tratamento (YYYY-MM-DD): ")
@@ -268,7 +289,9 @@ def adicionar_prescricao_menu(user):
     clear()
     print("#==# Adicionar Prescrição #==#")
     try:
+        listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
+        listar_medicos_simples()
         id_med = int(input("ID do médico: "))
         medicamento = input("Nome do medicamento: ")
         data_presc = input("Data da prescrição (YYYY-MM-DD): ")
@@ -293,8 +316,14 @@ def visualizar_pacientes_menu(user):
         contato = input("Contato: ")
         pacientes = buscar_paciente_por_contato(contato)
     print("\nResultados:")
-    for pac in pacientes:
-        print(pac)
+    if pacientes:
+        print("ID | Nome                 | Data Nasc. | Gênero | Contato")
+        print("-"*60)
+        for pac in pacientes:
+            # (id_paciente, nome, data_nascimento, genero, contato, prontuario)
+            print(f"{pac[0]:<2} | {pac[1]:<20} | {pac[2]:<10} | {pac[3]:<6} | {pac[4]}")
+    else:
+        print("Nenhum paciente encontrado.")
     gravar_log(user[0], "visualizar_pacientes", "sucesso")
     espera()
 
@@ -303,19 +332,36 @@ def visualizar_funcionarios_menu(user, so_medicos=False):
     if so_medicos:
         print("#==# Médicos #==#")
         medicos = buscar_medico_por_nome("")
-        for m in medicos:
-            print(m)
+        if medicos:
+            print("ID | Nome                 | Especialidade       | Contato")
+            print("-"*65)
+            for m in medicos:
+                # (id_medico, nome, especialidade, contato)
+                print(f"{m[0]:<2} | {m[1]:<20} | {m[2]:<18} | {m[3]}")
+        else:
+            print("Nenhum médico encontrado.")
     else:
         print("1. Médicos\n2. Enfermeiros")
         op = input("Opção: ")
         if op == "1":
             medicos = buscar_medico_por_nome("")
-            for m in medicos:
-                print(m)
+            if medicos:
+                print("ID | Nome                 | Especialidade       | Contato")
+                print("-"*65)
+                for m in medicos:
+                    print(f"{m[0]:<2} | {m[1]:<20} | {m[2]:<18} | {m[3]}")
+            else:
+                print("Nenhum médico encontrado.")
         else:
             enfers = buscar_enfermeiro_por_nome("")
-            for e in enfers:
-                print(e)
+            if enfers:
+                print("ID | Nome                 | Contato")
+                print("-"*40)
+                for e in enfers:
+                    # (id_enfermeiro, nome, contato)
+                    print(f"{e[0]:<2} | {e[1]:<20} | {e[2]}")
+            else:
+                print("Nenhum enfermeiro encontrado.")
     gravar_log(user[0], "visualizar_funcionarios", "sucesso")
     espera()
 
@@ -327,6 +373,12 @@ def modificar_contato_menu(user):
     print("3. Enfermeiro")
     op = input("Qual tipo de utilizador? ")
     try:
+        if op == "1":
+            listar_pacientes_simples()
+        elif op == "2":
+            listar_medicos_simples()
+        elif op == "3":
+            listar_enfermeiros_simples()
         id = int(input("ID do utilizador: "))
         novo_contato = input("Novo contato: ")
         if op == "1":
@@ -366,6 +418,7 @@ def visualizar_consultas_menu(user, so_meu_medico=False):
 def visualizar_tratamentos_menu(user):
     clear()
     print("#==# Visualizar Tratamentos de um Paciente #==#")
+    listar_pacientes_simples()
     idp = int(input("ID do paciente: "))
     tratamentos = buscar_tratamentos_paciente_com_medico(idp)
     for t in tratamentos:
@@ -379,6 +432,7 @@ def visualizar_prescricoes_menu(user, so_meu_medico=False):
     if so_meu_medico:
         id_med = user[0]  # assume que o id_user = id_medico
     else:
+        listar_medicos_simples()
         id_med = int(input("ID do médico: "))
     print("1. Por período")
     print("2. Por faixa etária e período")
@@ -426,6 +480,7 @@ def visualizar_log_menu(user):
 def excluir_paciente_menu(user):
     clear()
     print("#==# Excluir Paciente #==#")
+    listar_pacientes_simples()
     idp = int(input("ID do paciente a excluir: "))
     afetados = excluir_paciente(idp)
     if afetados:
@@ -439,6 +494,7 @@ def excluir_paciente_menu(user):
 def excluir_medico_menu(user):
     clear()
     print("#==# Excluir Médico #==#")
+    listar_medicos_simples()
     idm = int(input("ID do médico a excluir: "))
     afetados = excluir_medico(idm)
     if afetados:
@@ -452,6 +508,7 @@ def excluir_medico_menu(user):
 def excluir_enfermeiro_menu(user):
     clear()
     print("#==# Excluir Enfermeiro #==#")
+    listar_enfermeiros_simples()
     ide = int(input("ID do enfermeiro a excluir: "))
     afetados = excluir_enfermeiro(ide)
     if afetados:
