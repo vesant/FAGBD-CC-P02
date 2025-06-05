@@ -68,7 +68,10 @@ def menu_admin(user):
         print("12. Visualizar funcionários médicos")
         print("13. Visualizar conteúdo de tabelas")
         print("14. Visualizar log de acessos")
-        print("15. Sair")
+        print("15. Excluir Paciente")
+        print("16. Excluir Médico")
+        print("17. Excluir Enfermeiro")
+        print("18. Sair")
         op = input("Opção: ")
 
         if op == "1":
@@ -100,6 +103,12 @@ def menu_admin(user):
         elif op == "14":
             visualizar_log_menu(user)
         elif op == "15":
+            excluir_paciente_menu(user)
+        elif op == "16":
+            excluir_medico_menu(user)
+        elif op == "17":
+            excluir_enfermeiro_menu(user)
+        elif op == "18":
             break
         else:
             print("Opção inválida!")
