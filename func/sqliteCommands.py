@@ -32,6 +32,88 @@ def conectar():
     # conecta (o SQLite cria o ficheiro se não existir)
     return sqlite3.connect(db_path)
 
+# funçao das tabelas principais
+def default_tables() :
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.executescript("""
+        DROP TABLE IF EXISTS Tratamento;
+        DROP TABLE IF EXISTS Prescricao;
+        DROP TABLE IF EXISTS Log_Acesso;
+        DROP TABLE IF EXISTS Paciente;
+        DROP TABLE IF EXISTS Medico;
+        DROP TABLE IF EXISTS Enfermeiro;
+        DROP TABLE IF EXISTS Users;
+
+        CREATE TABLE IF NOT EXISTS Paciente (
+            id_paciente INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            data_nascimento TEXT NOT NULL,
+            genero TEXT NOT NULL,
+            contato TEXT NOT NULL,
+            prontuario TEXT --nao  necesita de ser null
+        );
+
+        CREATE TABLE IF NOT EXISTS Medico (
+            id_medico INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            especialidade TEXT NOT NULL,
+            contato TEXT NOT NULL-- ESTA COLUNA É OBRIGATÓRIA para o Python funcionar!
+        );
+
+        CREATE TABLE IF NOT EXISTS Enfermeiro (
+            id_enfermeiro INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            contato TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Consulta (
+            id_consulta INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_paciente INTEGER NOT NULL,
+            id_medico INTEGER NOT NULL,
+            data_consulta TEXT NOT NULL,
+            status TEXT NOT NULL,
+            FOREIGN KEY(id_paciente) REFERENCES Paciente(id_paciente),
+            FOREIGN KEY(id_medico) REFERENCES Medico(id_medico)
+        );
+
+        CREATE TABLE IF NOT EXISTS Tratamento (
+            id_tratamento INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_paciente INTEGER NOT NULL,
+            descricao TEXT CHECK (LENGTH(descricao) <= 1024),
+            data_tratamento TEXT NOT NULL,
+            FOREIGN KEY(id_paciente) REFERENCES Paciente(id_paciente)
+        );
+
+        CREATE TABLE IF NOT EXISTS Prescricao (
+            id_prescricao INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_paciente INTEGER NOT NULL,
+            id_medico INTEGER NOT NULL,
+            nome_medicamento TEXT NOT NULL,
+            data_prescricao TEXT NOT NULL,
+            FOREIGN KEY(id_paciente) REFERENCES Paciente(id_paciente),
+            FOREIGN KEY(id_medico) REFERENCES Medico(id_medico)
+        );
+
+        CREATE TABLE IF NOT EXISTS Users (
+            id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+            login TEXT UNIQUE NOT NULL,
+            senha TEXT NOT NULL,
+            tipo_user TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Log_Acesso (
+            id_log INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_user INTEGER NOT NULL,
+            acao_executada TEXT NOT NULL,
+            data TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            status TEXT NOT NULL,
+            FOREIGN KEY(id_user) REFERENCES Users(id_user)
+        );
+    """)
+    conn.commit()
+    conn.close()
+
 # ---------------------- #
 # funçoes para pacientes #
 # ---------------------- #
@@ -544,6 +626,9 @@ def buscar_tratamentos_paciente_com_medico(id_paciente):
 
 # esta funçao vai criar dados de a db estiver vazia
 def create_data_debug() :
+    # vai criar as tabelas
+    default_tables()
+
     # criação de user admin
     admin_id = adicionar_user("adm1", "proj2025@", "admin")
     print("Admin criado com ID:", admin_id)
