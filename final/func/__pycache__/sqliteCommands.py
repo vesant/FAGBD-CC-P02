@@ -22,14 +22,97 @@ def conectar():
     else:
         base_path = os.path.dirname(os.path.abspath(__file__))
 
-    # caminho real para a pasta db
-    db_path = os.path.join(base_path, "..", "db", "dbHospital.db")
+    # caminho da pasta db
+    db_dir = os.path.join(base_path, "..", "db")
+    os.makedirs(db_dir, exist_ok=True)  # cria a pasta se não existir
 
-    # garante que o ficheiro existe, ou dá erro explícito
-    if not os.path.exists(db_path):
-        raise FileNotFoundError(f"Base de dados não encontrada em: {db_path}")
+    # caminho completo para o ficheiro da base de dados
+    db_path = os.path.join(db_dir, "dbHospital.db")
 
+    # conecta (o SQLite cria o ficheiro se não existir)
     return sqlite3.connect(db_path)
+
+# funçao das tabelas principais
+def default_tables() :
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.executescript("""
+        DROP TABLE IF EXISTS Tratamento;
+        DROP TABLE IF EXISTS Prescricao;
+        DROP TABLE IF EXISTS Log_Acesso;
+        DROP TABLE IF EXISTS Paciente;
+        DROP TABLE IF EXISTS Medico;
+        DROP TABLE IF EXISTS Enfermeiro;
+        DROP TABLE IF EXISTS Users;
+
+        CREATE TABLE IF NOT EXISTS Paciente (
+            id_paciente INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            data_nascimento TEXT NOT NULL,
+            genero TEXT NOT NULL,
+            contato TEXT NOT NULL,
+            prontuario TEXT --nao  necesita de ser null
+        );
+
+        CREATE TABLE IF NOT EXISTS Medico (
+            id_medico INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            especialidade TEXT NOT NULL,
+            contato TEXT NOT NULL-- ESTA COLUNA É OBRIGATÓRIA para o Python funcionar!
+        );
+
+        CREATE TABLE IF NOT EXISTS Enfermeiro (
+            id_enfermeiro INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            contato TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Consulta (
+            id_consulta INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_paciente INTEGER NOT NULL,
+            id_medico INTEGER NOT NULL,
+            data_consulta TEXT NOT NULL,
+            status TEXT NOT NULL,
+            FOREIGN KEY(id_paciente) REFERENCES Paciente(id_paciente),
+            FOREIGN KEY(id_medico) REFERENCES Medico(id_medico)
+        );
+
+        CREATE TABLE IF NOT EXISTS Tratamento (
+            id_tratamento INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_paciente INTEGER NOT NULL,
+            descricao TEXT CHECK (LENGTH(descricao) <= 1024),
+            data_tratamento TEXT NOT NULL,
+            FOREIGN KEY(id_paciente) REFERENCES Paciente(id_paciente)
+        );
+
+        CREATE TABLE IF NOT EXISTS Prescricao (
+            id_prescricao INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_paciente INTEGER NOT NULL,
+            id_medico INTEGER NOT NULL,
+            nome_medicamento TEXT NOT NULL,
+            data_prescricao TEXT NOT NULL,
+            FOREIGN KEY(id_paciente) REFERENCES Paciente(id_paciente),
+            FOREIGN KEY(id_medico) REFERENCES Medico(id_medico)
+        );
+
+        CREATE TABLE IF NOT EXISTS Users (
+            id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+            login TEXT UNIQUE NOT NULL,
+            senha TEXT NOT NULL,
+            tipo_user TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Log_Acesso (
+            id_log INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_user INTEGER NOT NULL,
+            acao_executada TEXT NOT NULL,
+            data TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            status TEXT NOT NULL,
+            FOREIGN KEY(id_user) REFERENCES Users(id_user)
+        );
+    """)
+    conn.commit()
+    conn.close()
 
 # ---------------------- #
 # funçoes para pacientes #
@@ -541,8 +624,11 @@ def buscar_tratamentos_paciente_com_medico(id_paciente):
 # debug #
 # ----- #
 
-# inserção de dados, para debug
-if __name__ == "__main__":
+# esta funçao vai criar dados de a db estiver vazia
+def create_data_debug() :
+    # vai criar as tabelas
+    default_tables()
+
     # criação de user admin
     admin_id = adicionar_user("adm1", "proj2025@", "admin")
     print("Admin criado com ID:", admin_id)
@@ -602,3 +688,7 @@ if __name__ == "__main__":
     # conta o total de pacientes
     total_pacs = contar_registros("Paciente")
     print("Total de pacientes cadastrados:", total_pacs)
+
+# inserção de dados, para debug
+if __name__ == "__main__":
+    create_data_debug()
