@@ -23,7 +23,7 @@ def conectar():
         base_path = os.path.dirname(os.path.abspath(__file__))
 
     # caminho da pasta db
-    db_dir = os.path.join(base_path, "..", "db")
+    db_dir = os.path.join(base_path) # , "..", "db"
     os.makedirs(db_dir, exist_ok=True)  # cria a pasta se não existir
 
     # caminho completo para o ficheiro da base de dados
