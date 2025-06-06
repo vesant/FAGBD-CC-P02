@@ -598,22 +598,38 @@ def visualizar_meus_tratamentos(user):
 # --------- #
 
 def main():
-    while True:
-        user = None
-        while not user:
-            user = login()
-        # user = (id_user, login, tipo_user)
-        if user[2] == "admin":
-            menu_admin(user)
-        elif user[2] == "paciente":
-            menu_paciente(user)
-        elif user[2] == "medico":
-            menu_medico(user)
-        elif user[2] == "enfermeiro":
-            menu_enfermeiro(user)
+    try:
+        # verifica se a tabela 'Medico' existe e tem pelo menos 1 registro
+        total = contar_registros("Medico")
+
+        if total > 0:
+            # db e tabela existem, e há dados
+            print("Base de dados e tabela existem, com dados.")
+            clear
+            while True:
+                user = None
+                while not user:
+                    user = login()
+                # user = (id_user, login, tipo_user)
+                if user[2] == "admin":
+                    menu_admin(user)
+                elif user[2] == "paciente":
+                    menu_paciente(user)
+                elif user[2] == "medico":
+                    menu_medico(user)
+                elif user[2] == "enfermeiro":
+                    menu_enfermeiro(user)
+                else:
+                    print("Tipo de utilizador desconhecido!")
+                    espera()
         else:
-            print("Tipo de utilizador desconhecido!")
-            espera()
+            # tabela existe mas está vazia  
+            print("Tabela existe, mas não contém dados.")
+            create_data_debug()
+    except Exception as e:
+        # erro pode ser que a DB ou a tabela não existam
+        print("Erro ao verificar a base de dados:", e)
+        # código para o caso de não existir
 
 if __name__ == "__main__":
     main()

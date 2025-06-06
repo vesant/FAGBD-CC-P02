@@ -541,8 +541,8 @@ def buscar_tratamentos_paciente_com_medico(id_paciente):
 # debug #
 # ----- #
 
-# inserção de dados, para debug
-if __name__ == "__main__":
+# esta funçao vai criar dados de a db estiver vazia
+def create_data_debug() :
     # criação de user admin
     admin_id = adicionar_user("adm1", "proj2025@", "admin")
     print("Admin criado com ID:", admin_id)
@@ -602,3 +602,7 @@ if __name__ == "__main__":
     # conta o total de pacientes
     total_pacs = contar_registros("Paciente")
     print("Total de pacientes cadastrados:", total_pacs)
+
+# inserção de dados, para debug
+if __name__ == "__main__":
+    create_data_debug()
