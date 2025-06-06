@@ -599,8 +599,9 @@ def visualizar_meus_tratamentos(user):
 
 def main():
     try:
+        conectar()
         # verifica se a tabela 'Medico' existe e tem pelo menos 1 registro
-        total = contar_registros("Medico")
+        total = contar_registros("Medico", "Paciente", "Enfermeiro", "Users")
 
         if total > 0:
             # db e tabela existem, e há dados
@@ -626,6 +627,7 @@ def main():
             # tabela existe mas está vazia  
             print("Tabela existe, mas não contém dados.")
             create_data_debug()
+            main()
     except Exception as e:
         # erro pode ser que a DB ou a tabela não existam
         print("Erro ao verificar a base de dados:", e)

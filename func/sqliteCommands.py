@@ -22,13 +22,14 @@ def conectar():
     else:
         base_path = os.path.dirname(os.path.abspath(__file__))
 
-    # caminho real para a pasta db
-    db_path = os.path.join(base_path, "..", "db", "dbHospital.db")
+    # caminho da pasta db
+    db_dir = os.path.join(base_path, "..", "db")
+    os.makedirs(db_dir, exist_ok=True)  # cria a pasta se não existir
 
-    # garante que o ficheiro existe, ou dá erro explícito
-    if not os.path.exists(db_path):
-        raise FileNotFoundError(f"Base de dados não encontrada em: {db_path}")
+    # caminho completo para o ficheiro da base de dados
+    db_path = os.path.join(db_dir, "dbHospital.db")
 
+    # conecta (o SQLite cria o ficheiro se não existir)
     return sqlite3.connect(db_path)
 
 # ---------------------- #
