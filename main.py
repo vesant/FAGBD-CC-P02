@@ -11,7 +11,7 @@ from rich.table import Table
 from rich.panel import Panel
 from rich.traceback import install
 import getpass
-import datetime
+from datetime import datetime
 from func.sqliteCommands import *
 
 install()
@@ -36,6 +36,12 @@ def op_in():
     
 def espera():
     input("\nClique ENTER para continuar...")
+
+def validar_data(data_str, formato="%Y-%m-%d"):
+    try:
+        return datetime.strptime(data_str, formato)
+    except ValueError:
+        return None
 
 def listar_pacientes_simples():
     pacientes = buscar_paciente_por_nome("")
@@ -219,7 +225,13 @@ def adicionar_paciente_menu(user):
     clear()
     console.print(Panel("#==# Adicionar Paciente #==#"))
     nome = input("Nome: ")
+    
+    while True:
     data_nasc = input("Data de nascimento (YYYY-MM-DD): ")
+    if validar_data(data_nasc):
+        break
+    console.print("[red]Formato inválido. Use YYYY-MM-DD[/red]")
+    
     genero = input("Gênero: ")
     contato = input("Contato: ")
     prontuario = input("Prontuário médico (texto livre): ")
@@ -273,7 +285,12 @@ def agendar_consulta_menu(user):
         id_pac = int(input("ID do paciente: "))
         listar_medicos_simples()
         id_med = int(input("ID do médico: "))
-        data_cons = input("Data da consulta (YYYY-MM-DD HH:MM): ")
+        while True:
+            data_cons = input("Data da consulta (YYYY-MM-DD HH:MM): ")
+            if validar_data_hora(data_cons):
+                break
+            console.print("[red]Formato inválido. Use YYYY-MM-DD HH:MM[/red]")
+    
         status = "agendada"
         idc = agendar_consulta(id_pac, id_med, data_cons, status)
         gravar_log(user[0], "agendar_consulta", "sucesso")
@@ -292,7 +309,13 @@ def adicionar_tratamento_menu(user):
         listar_pacientes_simples()
         id_pac = int(input("ID do paciente: "))
         descricao = input("Descrição do tratamento (máx 1024): ")
-        data_trat = input("Data do tratamento (YYYY-MM-DD): ")
+        
+        while True:
+            data_trat = input("Data do tratamento (YYYY-MM-DD): ")
+            if validar_data(data_trat):
+                break
+            console.print("[red]Formato inválido. Use YYYY-MM-DD[/red]")
+
         idt = adicionar_tratamento(id_pac, descricao[:1024], data_trat)
         gravar_log(user[0], "add_tratamento", "sucesso")
         console.print(f"[green]Tratamento adicionado com ID: {idt}[/green]")
@@ -311,7 +334,13 @@ def adicionar_prescricao_menu(user):
         listar_medicos_simples()
         id_med = int(input("ID do médico: "))
         medicamento = input("Nome do medicamento: ")
-        data_presc = input("Data da prescrição (YYYY-MM-DD): ")
+        
+        while True:
+            data_presc = input("Data da prescrição (YYYY-MM-DD): ")
+            if validar_data(data_presc):
+                break
+            console.print("[red]Formato inválido. Use YYYY-MM-DD[/red]")
+
         idp = adicionar_prescricao(id_pac, id_med, medicamento, data_presc)
         gravar_log(user[0], "add_prescricao", "sucesso")
         console.print(f"[green]Prescrição adicionada com ID: {idp}[/green]")
@@ -417,12 +446,24 @@ def visualizar_consultas_menu(user, so_meu_medico=False):
     op = input("Opção: ")
     try:
         if op == "1":
-            data = input("Data (YYYY-MM-DD): ")
+            while True:
+                data = input("Data (YYYY-MM-DD): ")
+                if validar_data(data):
+                    break
+                console.print("[red]Data inválida. Use o formato YYYY-MM-DD[/red]")
+
             consultas = buscar_consultas_por_data(data)
+
         else:
-            data1 = input("Data início (YYYY-MM-DD): ")
-            data2 = input("Data fim (YYYY-MM-DD): ")
+            while True:
+                data1 = input("Data início (YYYY-MM-DD): ")
+                data2 = input("Data fim (YYYY-MM-DD): ")
+                if validar_data(data1) and validar_data(data2):
+                    break
+                console.print("[red]Datas inválidas. Use o formato YYYY-MM-DD[/red]")
+            
             consultas = buscar_consultas_intervalo(data1, data2)
+
         for c in consultas:
             console.print(c)
         gravar_log(user[0], "visualizar_consultas", "sucesso")
