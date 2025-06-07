@@ -42,6 +42,27 @@ def validar_data(data_str, formato="%Y-%m-%d"):
         return datetime.strptime(data_str, formato)
     except ValueError:
         return None
+        
+def validar_data_hora(data_str, formato="%Y-%m-%d %H:%M"):
+    try:
+        data_valida = datetime.strptime(data_str, formato)
+        return data_valida
+    except ValueError:
+        return None
+
+def input_inteiro(msg):
+    while True:
+        try:
+            return int(input(msg))
+        except ValueError:
+            console.print("[red]Entrada inválida! Insira um número inteiro.[/red]")
+
+def input_obrigatorio(mensagem):
+    while True:
+        valor = input(mensagem).strip()
+        if valor:
+            return valor
+        console.print("[red]---- ATENÇÃO -- Campo Obrigatório! ----[/red]")
 
 def listar_pacientes_simples():
     pacientes = buscar_paciente_por_nome("")
@@ -224,7 +245,7 @@ def menu_enfermeiro(user):
 def adicionar_paciente_menu(user):
     clear()
     console.print(Panel("#==# Adicionar Paciente #==#"))
-    nome = input("Nome: ")
+    nome = input_obrigatorio("Nome: ")
     
     while True:
     data_nasc = input("Data de nascimento (YYYY-MM-DD): ")
@@ -232,9 +253,9 @@ def adicionar_paciente_menu(user):
         break
     console.print("[red]Formato inválido. Use YYYY-MM-DD[/red]")
     
-    genero = input("Gênero: ")
-    contato = input("Contato: ")
-    prontuario = input("Prontuário médico (texto livre): ")
+    genero = input_obrigatorio("Gênero: ")
+    contato = input_obrigatorio("Contato: ")
+    prontuario = input_obrigatorio("Prontuário médico (texto livre): ")
     prontuario_cifrado = cifrar(prontuario)  # cifra aqui!
 
     try:
@@ -253,10 +274,10 @@ def adicionar_funcionario_menu(user):
     console.print("1. Médico")
     console.print("2. Enfermeiro")
     tipo = input("Opção: ")
-    nome = input("Nome: ")
-    contato = input("Contato: ")
+    nome = input_obrigatorio("Nome: ")
+    contato = input_obrigatorio("Contato: ")
     if tipo == "1":
-        espec = input("Especialidade: ")
+        espec = input_obrigatorio("Especialidade: ")
         try:
             idm = adicionar_medico(nome, espec, contato)
             gravar_log(user[0], "add_medico", "sucesso")
@@ -282,9 +303,9 @@ def agendar_consulta_menu(user):
     console.print(Panel("#==# Agendar Consulta #==#"))
     try:
         listar_pacientes_simples()
-        id_pac = int(input("ID do paciente: "))
+        id_pac = input_inteiro("ID do paciente: ")
         listar_medicos_simples()
-        id_med = int(input("ID do médico: "))
+        id_med = input_inteiro("ID do médico: ")
         while True:
             data_cons = input("Data da consulta (YYYY-MM-DD HH:MM): ")
             if validar_data_hora(data_cons):
@@ -307,8 +328,8 @@ def adicionar_tratamento_menu(user):
     console.print(Panel("#==# Adicionar Tratamento #==#"))
     try:
         listar_pacientes_simples()
-        id_pac = int(input("ID do paciente: "))
-        descricao = input("Descrição do tratamento (máx 1024): ")
+        id_pac = input_inteiro("ID do paciente: ")
+        descricao = input_obrigatorio("Descrição do tratamento (máx 1024): ")
         
         while True:
             data_trat = input("Data do tratamento (YYYY-MM-DD): ")
@@ -330,10 +351,10 @@ def adicionar_prescricao_menu(user):
     console.print(Panel("#==# Adicionar Prescrição #==#"))
     try:
         listar_pacientes_simples()
-        id_pac = int(input("ID do paciente: "))
+        id_pac = input_inteiro("ID do paciente: ")
         listar_medicos_simples()
-        id_med = int(input("ID do médico: "))
-        medicamento = input("Nome do medicamento: ")
+        id_med = input_inteiro("ID do médico: ")
+        medicamento = input_obrigatorio("Nome do medicamento: ")
         
         while True:
             data_presc = input("Data da prescrição (YYYY-MM-DD): ")
@@ -419,8 +440,8 @@ def modificar_contato_menu(user):
             listar_medicos_simples()
         elif op == "3":
             listar_enfermeiros_simples()
-        id = int(input("ID do utilizador: "))
-        novo_contato = input("Novo contato: ")
+        id = input_inteiro("ID do utilizador: ")
+        novo_contato = input_obrigatorio("Novo contato: ")
         if op == "1":
             editar_paciente(id, contato=novo_contato)
         elif op == "2":
@@ -446,12 +467,12 @@ def visualizar_consultas_menu(user, so_meu_medico=False):
     op = input("Opção: ")
     try:
         if op == "1":
+            
             while True:
                 data = input("Data (YYYY-MM-DD): ")
                 if validar_data(data):
                     break
                 console.print("[red]Data inválida. Use o formato YYYY-MM-DD[/red]")
-
             consultas = buscar_consultas_por_data(data)
 
         else:
@@ -477,7 +498,7 @@ def visualizar_tratamentos_menu(user):
     console.print(Panel("#==# Visualizar Tratamentos #==#"))
     try:
         listar_pacientes_simples()
-        idp = int(input("ID do paciente: "))
+        idp = input_inteiro("ID do paciente: ")
         tratamentos = buscar_tratamentos_paciente_com_medico(idp)
         for t in tratamentos:
             console.print(f"ID: {t[0]}, Descrição: {t[1]}, Data: {t[2]}, Médico: {t[3] or '---'}")
@@ -495,17 +516,22 @@ def visualizar_prescricoes_menu(user, so_meu_medico=False):
             id_med = user[0]
         else:
             listar_medicos_simples()
-            id_med = int(input("ID do médico: "))
+            id_med = input_inteiro("ID do médico: ")
         console.print("1. Por período")
         console.print("2. Por faixa etária e período")
         op = input("Opção: ")
-        data1 = input("Data início (YYYY-MM-DD): ")
-        data2 = input("Data fim (YYYY-MM-DD): ")
+        while True:
+            data1 = input("Data início (YYYY-MM-DD): ")
+            data2 = input("Data fim (YYYY-MM-DD): ")
+            if validar_data(data1) and validar_data(data2):
+                break
+            console.print("[red]Datas inválidas. Use o formato YYYY-MM-DD[/red]")
+
         if op == "1":
             prescricoes = buscar_prescricoes_por_medico_periodo(id_med, data1, data2)
         else:
-            idade_min = int(input("Idade mínima: "))
-            idade_max = int(input("Idade máxima: "))
+            idade_min = input_inteiro("Idade mínima: ")
+            idade_max = input_inteiro("Idade máxima: ")
             prescricoes = buscar_prescricoes_medico_idade(id_med, idade_min, idade_max, data1, data2)
         for p in prescricoes:
             console.print(p)
@@ -537,11 +563,17 @@ def visualizar_log_menu(user):
     op = input("Opção: ")
     try:
         if op == "1":
-            data1 = input("Data início (YYYY-MM-DD): ")
-            data2 = input("Data fim (YYYY-MM-DD): ")
+            
+            while True:
+                data1 = input("Data início (YYYY-MM-DD): ")
+                data2 = input("Data fim (YYYY-MM-DD): ")
+                if validar_data(data1) and validar_data(data2):
+                    break
+                console.print("[red]Datas inválidas. Use o formato YYYY-MM-DD[/red]")
             logs = buscar_logs_por_periodo(data1, data2)
+            
         else:
-            id_user = int(input("ID do utilizador: "))
+            id_user = input_inteiro("ID do utilizador: ")
             logs = buscar_logs_por_user(id_user)
         for l in logs:
             console.print(l)
@@ -554,7 +586,7 @@ def excluir_paciente_menu(user):
     clear()
     console.print(Panel("#==# Excluir Paciente #==#"))
     listar_pacientes_simples()
-    idp = int(input("ID do paciente a excluir: "))
+    idp = input_inteiro("ID do paciente a excluir: ")
     try:
         afetados = excluir_paciente(idp)
         if afetados:
@@ -572,7 +604,7 @@ def excluir_medico_menu(user):
     clear()
     console.print(Panel("#==# Excluir Médico #==#"))
     listar_medicos_simples()
-    idm = int(input("ID do médico a excluir: "))
+    idm = input_inteiro("ID do médico a excluir: ")
     try:
         afetados = excluir_medico(idm)
         if afetados:
@@ -590,7 +622,7 @@ def excluir_enfermeiro_menu(user):
     clear()
     console.print(Panel("#==# Excluir Enfermeiro #==#"))
     listar_enfermeiros_simples()
-    ide = int(input("ID do enfermeiro a excluir: "))
+    ide = input_inteiro("ID do enfermeiro a excluir: ")
     try:
         afetados = excluir_enfermeiro(ide)
         if afetados:
@@ -614,7 +646,7 @@ def visualizar_meu_perfil(user):
 
 def modificar_meus_dados_menu(user):
     print("== Modificar meus dados ==")
-    novo_contato = input("Novo contato: ")
+    novo_contato = input_obrigatorio("Novo contato: ")
     # supondo user[2] == tipo_user e user[0] == id_user
     if user[2] == "paciente":
         editar_paciente(user[0], contato=novo_contato)
