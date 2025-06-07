@@ -31,6 +31,9 @@ def cifrar(texto):
 def decifrar(texto_cifrado):
     return texto_cifrado[::-1]
 
+def op_in():
+    console.print("[yellow]Opção inválida![/yellow]")
+    
 def espera():
     input("\nClique ENTER para continuar...")
 
@@ -138,7 +141,7 @@ def menu_admin(user):
         elif op == "18":
             break
         else:
-            console.print("[yellow]Opção inválida![/yellow]")
+            op_in()
             espera()
 
 def menu_paciente(user):
@@ -162,7 +165,7 @@ def menu_paciente(user):
         elif op == "5":
             break
         else:
-            console.print("[yellow]Opção inválida![/yellow]")
+            op_in()
             espera()
 
 def menu_medico(user):
@@ -183,7 +186,7 @@ def menu_medico(user):
         elif op == "4":
             break
         else:
-            console.print("[yellow]Opção inválida![/yellow]")
+            op_in()
             espera()
 
 def menu_enfermeiro(user):
@@ -204,7 +207,7 @@ def menu_enfermeiro(user):
         elif op == "4":
             break
         else:
-            console.print("[yellow]Opção inválida![/yellow]")
+            op_in()
             espera()
 
 # ----------------- #
@@ -258,7 +261,7 @@ def adicionar_funcionario_menu(user):
             gravar_log(user[0], "add_enfermeiro", "falha")
             console.print(f"[red]Erro ao adicionar enfermeiro:[/red] {e}")
     else:
-        console.print("[yellow]Opção inválida![/yellow]")
+        op_in()
     espera()
 
 # vai agendar uma consulta com paciente e médico
@@ -396,7 +399,7 @@ def modificar_contato_menu(user):
         elif op == "3":
             editar_enfermeiro(id, contato=novo_contato)
         else:
-            console.print("[yellow]Opção inválida![/yellow]")
+            op_in()
             return
         gravar_log(user[0], "modificar_contato", "sucesso")
         console.print("[green]Contato atualizado![/green]")
