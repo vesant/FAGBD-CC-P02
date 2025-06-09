@@ -631,7 +631,15 @@ def create_data_debug() :
 
     # criação de user admin
     admin_id = adicionar_user("adm1", "proj2025@", "admin")
+    medico_id = adicionar_user("medico", "proj2025@", "medico")
+    enfermeiro_id = adicionar_user("enfermeiro", "proj2025@", "enfermeiro")
+    paciente_id = adicionar_user("paciente", "proj2025@", "paciente")
+
+
     print("Admin criado com ID:", admin_id)
+    print("Medico criado com ID:", medico_id)
+    print("Enfermeiro criado com ID:", enfermeiro_id)
+    print("Paciente criado com ID:", paciente_id)
 
     # debug provisorio
     def cifrar(texto):
@@ -679,6 +687,15 @@ def create_data_debug() :
 
     # grava acesso em log
     log_id = gravar_log(admin_id, "login", "sucesso")
+    print("Log de acesso criado com ID:", log_id)
+    
+    log_id = gravar_log(medico_id, "login", "sucesso")
+    print("Log de acesso criado com ID:", log_id)
+
+    log_id = gravar_log(enfermeiro_id, "login", "sucesso")
+    print("Log de acesso criado com ID:", log_id)
+
+    log_id = gravar_log(paciente_id, "login", "sucesso")
     print("Log de acesso criado com ID:", log_id)
 
     # mostra pacientes com nome "John"
