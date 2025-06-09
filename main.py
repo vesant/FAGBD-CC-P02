@@ -253,19 +253,19 @@ def adicionar_paciente_menu(user):
             break
         console.print("[red]Formato inválido. Use YYYY-MM-DD[/red]")
         
-        genero = input_obrigatorio("Gênero: ")
-        contato = input_obrigatorio("Contato: ")
-        prontuario = input_obrigatorio("Prontuário médico (texto livre): ")
-        prontuario_cifrado = cifrar(prontuario)  # cifra aqui!
+    genero = input_obrigatorio("Gênero: ")
+    contato = input_obrigatorio("Contato: ")
+    prontuario = input_obrigatorio("Prontuário médico (texto livre): ")
+    prontuario_cifrado = cifrar(prontuario)  # cifra aqui!
 
-        try:
-            id_pac = adicionar_paciente(nome, data_nasc, genero, contato, prontuario_cifrado)
-            gravar_log(user[0], "add_paciente", "sucesso")
-            console.print(f"[green]Paciente adicionado com ID: {id_pac}[/green]")
-        except Exception as e:
-            gravar_log(user[0], "add_paciente", "falha")
-            console.print(f"[red]Erro ao adicionar paciente:[/red] {e}")
-        espera()
+    try:
+        id_pac = adicionar_paciente(nome, data_nasc, genero, contato, prontuario_cifrado)
+        gravar_log(user[0], "add_paciente", "sucesso")
+        console.print(f"[green]Paciente adicionado com ID: {id_pac}[/green]")
+    except Exception as e:
+        gravar_log(user[0], "add_paciente", "falha")
+        console.print(f"[red]Erro ao adicionar paciente:[/red] {e}")
+    espera()
 
 # vai adicionar médico ou enfermeiro conforme a escolha
 def adicionar_funcionario_menu(user):
